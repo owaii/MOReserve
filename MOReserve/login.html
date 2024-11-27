@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Account - MOReserve</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="static/src/js/signup.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/src/css/styles.css">
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <!-- Top Bar -->
+  <div class="bg-gray-800 py-4 px-6 flex items-center justify-between">
+    <img src="static/img/logo.png" alt="MOReserve Logo" class="h-10 w-auto object-contain">
+    <button onclick="window.location.href='index.html'" class="text-gray-400 hover:text-gray-200 text-xl">✖</button>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="w-full bg-gray-700">
+    <div class="progress-bar" style="width: 14%;"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container mx-auto px-6 py-10 max-w-3xl center-container">
+    <!-- Step 1: Welcome -->
+    <div class="step">
+      <h2 class="text-3xl font-bold text-teal-400">Welcome to MOReserve!</h2>
+      <p class="text-gray-300 mt-4">Creating an account takes only <strong>5 minutes</strong>. Let's get started!</p>
+      <div class="mt-6 flex justify-between">
+        <span></span>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Name -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">What's your name?</h2>
+      <input required type="text" placeholder="First Name" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <input required type="text" placeholder="Last Name" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Contact Information -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">Contact Information</h2>
+      <input id="phone-number" required type="text" placeholder="Phone Number (e.g., 600 600 600)" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <input id="email" required type="email" placeholder="Email Address" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <input id="confirm-email" required type="email" placeholder="Confirm Email Address" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <label class="flex items-center mt-4 text-gray-300">
+        <input type="checkbox" required class="mr-2"> Allow MOReserve to process personal data
+      </label>
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Phone Code Confirmation -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">Phone Code Confirmation</h2>
+      <input required type="text" maxlength="6" placeholder="6-digit Code" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 5: Date of Birth -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">Your Date of Birth</h2>
+      <input required type="date" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 6: Setup Account -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">Set Up Your Account</h2>
+      <input required type="text" placeholder="Username" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <input required type="password" minlength="16" placeholder="Password (min 16 characters)" class="input-field block bg-gray-800 rounded-lg text-gray-200">
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 7: Agreement -->
+    <div class="step hidden">
+      <h2 class="text-2xl font-bold text-teal-400">Agreements</h2>
+      <label class="flex items-center mt-4 text-gray-300">
+        <input type="checkbox" required class="mr-2"> I have read and accept the Terms & Conditions
+      </label>
+      <div class="mt-6 flex justify-between">
+        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
+          Back
+        </button>
+        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Finish
+        </button>
+      </div>
+    </div>
+
+    <!-- Completion Step -->
+    <div class="step hidden">
+      <div class="text-center">
+        <h2 class="text-4xl font-bold text-teal-400 animate-bounce">🎉 Success! 🎉</h2>
+        <p class="text-gray-300 mt-4">Your account creation is pending.</p>
+        <ul class="mt-6 text-gray-300 text-left mx-auto list-disc">
+          <li>Check your email for confirmation.</li>
+          <li>Download our app for faster access.</li>
+          <li>Enjoy personalized banking experiences!</li>
+        </ul>
+        <button onclick="window.location.href='index.html'" class="mt-8 px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+          Go to Homepage
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
