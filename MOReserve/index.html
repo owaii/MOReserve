@@ -16,14 +16,11 @@
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
       <img src="static/img/logo.png" alt="MOReserve Logo" class="h-12 w-auto object-contain">
       <nav class="space-x-6 flex items-center">
-        <a href="#features" class="hover:text-teal-400">Features</a>
-        <a href="#testimonials" class="hover:text-teal-400">Testimonials</a>
+        <a href="#how-it-works" class="hover:text-teal-400">Features</a>
         <a href="#special-offer" class="hover:text-teal-400">Special Offer</a>
-        <a href="login.html">
-          <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-          Login
-          </button>
-        </a>
+        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:scale-110 transition-transform">
+        Login
+        </button>
       </nav>
     </div>
   </header>
@@ -32,21 +29,25 @@
   <section class="bg-gray-900 py-20">
     <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
       <div class="md:w-1/2">
-        <h2 class="text-4xl md:text-5xl font-bold text-teal-400 leading-tight">
-          Banking Designed for the Future.
+        <h2 class="text-4xl md:text-5xl font-bold text-teal-400 leading-tight typewriter-text">
+          <!--Banking Designed for the Future-->
         </h2>
+        
         <p class="text-lg text-gray-400 mt-4">
           At MOReserve, we bring modern banking solutions to your fingertips. Manage accounts, secure loans, and enjoy seamless transactions—all from the comfort of your device.
         </p>
-        <button class="mt-6 px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
+        <button onclick="window.location.href='signup.html'" class="relative mt-6 px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow isolation-auto z-10
+          before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded-full 
+          before:bg-cyan-300 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700 motion-safe:animate-bounce">
           Open Your Account
         </button>
       </div>
       <div class="md:w-1/2 mt-10 md:mt-0">
-        <img src="static/img/landing_moreserve.png" alt="Modern banking illustration" class="w-full rounded-lg animate-float">
+        <img src="static/img/landing_moreserve.png" alt="Modern banking illustration" class="w-full rounded-lg">
       </div>
     </div>
   </section>
+  
 
   <!-- Features Section -->
   <section id="features" class="bg-gray-800 py-16">
@@ -197,4 +198,24 @@
   </footer>
 
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const textElement = document.querySelector(".typewriter-text");
+    const text = "Banking Designed for the Future.";
+    let index = 0;
+
+    function typeWriter() {
+      if (index < text.length) {
+        textElement.textContent += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 100);
+      } else {
+        textElement.classList.add("no-cursor");
+      }
+    }
+
+    typeWriter();
+  });
+</script>
+
 </html>

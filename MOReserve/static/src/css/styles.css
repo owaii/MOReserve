@@ -1,7 +1,6 @@
 body {
     font-family: 'Space Mono', monospace;
-    scroll-behavior: smooth;
-  }
+  }html{scroll-behavior: smooth;}
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
@@ -14,6 +13,7 @@ body {
   .animate-fade-up { animation: fade-up 0.8s ease-out; }
   .navbar-sticky { position: sticky; top: 0; z-index: 50; }
 
+  /* SIGNUP */
   .hidden {
     display: none;
   }
@@ -34,3 +34,17 @@ body {
     font-size: 1rem;
     margin-top: 1rem;
   }
+
+  /* TYPEWRITER */
+  .typewriter-text::after {
+    content: "|";
+    display: inline-block;
+    margin-left: 4px;
+    animation: blink 0.7s step-start infinite;
+  }
+  .typewriter-text.no-cursor::after {
+    content: "";
+    animation: none;
+  }
+
+  
