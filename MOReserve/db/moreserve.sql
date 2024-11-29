@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Lis 27, 2024 at 03:20 PM
--- Wersja serwera: 10.4.28-MariaDB
--- Wersja PHP: 8.2.4
+-- Generation Time: Lis 29, 2024 at 08:14 PM
+-- Wersja serwera: 10.4.32-MariaDB
+-- Wersja PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,42 +30,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `accounts` (
   `account_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `account_number` varchar(20) NOT NULL,
-  `account_type` varchar(50) NOT NULL,
+  `account_number` char(16) NOT NULL,
+  `account_type` enum('Savings','Checking','Business') NOT NULL,
   `balance` decimal(15,2) DEFAULT 0.00,
-  `currency` varchar(3) DEFAULT 'USD',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `addresses`
---
-
-CREATE TABLE `addresses` (
-  `address_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `street` varchar(255) NOT NULL,
-  `city` varchar(100) NOT NULL,
-  `state` varchar(100) DEFAULT NULL,
-  `country` varchar(100) NOT NULL,
-  `postal_code` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `auditlogs`
---
-
-CREATE TABLE `auditlogs` (
-  `log_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `action` varchar(255) NOT NULL,
-  `action_timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -76,46 +44,26 @@ CREATE TABLE `auditlogs` (
 
 CREATE TABLE `cards` (
   `card_id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `card_number` varchar(16) NOT NULL,
-  `card_holder_name` varchar(100) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `card_number` char(16) NOT NULL,
+  `card_type` varchar(32) NOT NULL,
   `expiration_date` date NOT NULL,
-  `cvv` varchar(4) NOT NULL,
-  `card_type` varchar(50) NOT NULL,
-  `status` varchar(20) DEFAULT 'active',
-  `issued_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `cardholder_name` varchar(100) NOT NULL,
+  `status` varchar(32) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `loans`
+-- Struktura tabeli dla tabeli `dashboard_data`
 --
 
-CREATE TABLE `loans` (
-  `loan_id` int(11) NOT NULL,
+CREATE TABLE `dashboard_data` (
+  `dashboard_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `loan_type` varchar(50) NOT NULL,
-  `amount` decimal(15,2) NOT NULL,
-  `interest_rate` decimal(5,2) NOT NULL,
-  `start_date` date NOT NULL,
-  `end_date` date DEFAULT NULL,
-  `status` varchar(20) DEFAULT 'active'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `payments`
---
-
-CREATE TABLE `payments` (
-  `payment_id` int(11) NOT NULL,
-  `loan_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
-  `amount` decimal(15,2) NOT NULL,
-  `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `method` varchar(50) NOT NULL
+  `monthly_spending` decimal(15,2) DEFAULT 0.00,
+  `monthly_income` decimal(15,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -127,12 +75,10 @@ CREATE TABLE `payments` (
 CREATE TABLE `transactions` (
   `transaction_id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
-  `transaction_type` varchar(50) NOT NULL,
+  `transaction_type` enum('Credit','Debit') NOT NULL,
   `amount` decimal(15,2) NOT NULL,
-  `transaction_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `description` text DEFAULT NULL,
-  `related_account_id` int(11) DEFAULT NULL,
-  `status` varchar(20) DEFAULT 'completed'
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -144,13 +90,30 @@ CREATE TABLE `transactions` (
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `phone_number` varchar(15) DEFAULT NULL,
-  `full_name` varchar(100) NOT NULL,
-  `date_of_birth` date DEFAULT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `phone_number` varchar(15) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `status` varchar(20) DEFAULT 'active'
+  `last_login` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `user_details`
+--
+
+CREATE TABLE `user_details` (
+  `detail_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `pesel` char(11) NOT NULL,
+  `mothers_maiden_name` varchar(100) NOT NULL,
+  `country` varchar(50) NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `street` varchar(100) NOT NULL,
+  `building_number` varchar(10) DEFAULT NULL,
+  `apartment_number` varchar(10) DEFAULT NULL,
+  `postal_code` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -166,40 +129,18 @@ ALTER TABLE `accounts`
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indeksy dla tabeli `addresses`
---
-ALTER TABLE `addresses`
-  ADD PRIMARY KEY (`address_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indeksy dla tabeli `auditlogs`
---
-ALTER TABLE `auditlogs`
-  ADD PRIMARY KEY (`log_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
 -- Indeksy dla tabeli `cards`
 --
 ALTER TABLE `cards`
   ADD PRIMARY KEY (`card_id`),
   ADD UNIQUE KEY `card_number` (`card_number`),
-  ADD KEY `account_id` (`account_id`);
-
---
--- Indeksy dla tabeli `loans`
---
-ALTER TABLE `loans`
-  ADD PRIMARY KEY (`loan_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indeksy dla tabeli `payments`
+-- Indeksy dla tabeli `dashboard_data`
 --
-ALTER TABLE `payments`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `loan_id` (`loan_id`),
+ALTER TABLE `dashboard_data`
+  ADD PRIMARY KEY (`dashboard_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
@@ -207,8 +148,7 @@ ALTER TABLE `payments`
 --
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`transaction_id`),
-  ADD KEY `account_id` (`account_id`),
-  ADD KEY `related_account_id` (`related_account_id`);
+  ADD KEY `account_id` (`account_id`);
 
 --
 -- Indeksy dla tabeli `users`
@@ -217,6 +157,14 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indeksy dla tabeli `user_details`
+--
+ALTER TABLE `user_details`
+  ADD PRIMARY KEY (`detail_id`),
+  ADD UNIQUE KEY `pesel` (`pesel`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -229,34 +177,16 @@ ALTER TABLE `accounts`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `addresses`
---
-ALTER TABLE `addresses`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auditlogs`
---
-ALTER TABLE `auditlogs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `cards`
 --
 ALTER TABLE `cards`
   MODIFY `card_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `loans`
+-- AUTO_INCREMENT for table `dashboard_data`
 --
-ALTER TABLE `loans`
-  MODIFY `loan_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payments`
---
-ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `dashboard_data`
+  MODIFY `dashboard_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transactions`
@@ -271,6 +201,12 @@ ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `user_details`
+--
+ALTER TABLE `user_details`
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -281,42 +217,28 @@ ALTER TABLE `accounts`
   ADD CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `addresses`
---
-ALTER TABLE `addresses`
-  ADD CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `auditlogs`
---
-ALTER TABLE `auditlogs`
-  ADD CONSTRAINT `auditlogs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
 -- Constraints for table `cards`
 --
 ALTER TABLE `cards`
-  ADD CONSTRAINT `cards_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`);
+  ADD CONSTRAINT `cards_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `loans`
+-- Constraints for table `dashboard_data`
 --
-ALTER TABLE `loans`
-  ADD CONSTRAINT `loans_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `payments`
---
-ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `loans` (`loan_id`),
-  ADD CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `dashboard_data`
+  ADD CONSTRAINT `dashboard_data_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `transactions`
 --
 ALTER TABLE `transactions`
-  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`),
-  ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`related_account_id`) REFERENCES `accounts` (`account_id`);
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_details`
+--
+ALTER TABLE `user_details`
+  ADD CONSTRAINT `user_details_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

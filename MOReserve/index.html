@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth md:scroll-auto">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body class="bg-gray-900 text-gray-100 ">
 
   <!-- Header -->
   <header class="bg-gray-800 shadow-lg navbar-sticky">
@@ -18,7 +18,7 @@
       <nav class="space-x-6 flex items-center">
         <a href="#how-it-works" class="hover:text-teal-400">Features</a>
         <a href="#special-offer" class="hover:text-teal-400">Special Offer</a>
-        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:scale-110 transition-transform">
+        <button onclick="window.location.href='login.html'" type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:scale-110 transition-transform">
         Login
         </button>
       </nav>
@@ -43,7 +43,7 @@
         </button>
       </div>
       <div class="md:w-1/2 mt-10 md:mt-0">
-        <img src="static/img/landing_moreserve.png" alt="Modern banking illustration" class="w-full rounded-lg">
+        <img src="static/img/landing_moreserve.png" alt="Modern banking illustration" class="w-full rounded-lg animate-fade-up">
       </div>
     </div>
   </section>

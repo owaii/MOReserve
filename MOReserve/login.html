@@ -3,146 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Open Account - MOReserve</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="static/src/js/signup.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <title>MOReserve - Login</title>
+  <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico"/>
   <link rel="stylesheet" href="static/src/css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-gray-100">
-  <!-- Top Bar -->
-  <div class="bg-gray-800 py-4 px-6 flex items-center justify-between">
-    <img src="static/img/logo.png" alt="MOReserve Logo" class="h-10 w-auto object-contain">
-    <button onclick="window.location.href='index.html'" class="text-gray-400 hover:text-gray-200 text-xl">✖</button>
-  </div>
+<body class="bg-gray-900 text-gray-100 overflow-hidden">
 
-  <!-- Progress Bar -->
-  <div class="w-full bg-gray-700">
-    <div class="progress-bar" style="width: 14%;"></div>
-  </div>
-
-  <!-- Main Container -->
-  <div class="container mx-auto px-6 py-10 max-w-3xl center-container">
-    <!-- Step 1: Welcome -->
-    <div class="step">
-      <h2 class="text-3xl font-bold text-teal-400">Welcome to MOReserve!</h2>
-      <p class="text-gray-300 mt-4">Creating an account takes only <strong>5 minutes</strong>. Let's get started!</p>
-      <div class="mt-6 flex justify-between">
-        <span></span>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
-      </div>
+  <!-- Header -->
+  <header class="bg-gray-800 shadow-lg navbar-sticky">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html"><img src="static/img/logo.png" alt="MOReserve Logo" class="h-12 w-auto object-contain"></a>
     </div>
+  </header>
 
-    <!-- Step 2: Name -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">What's your name?</h2>
-      <input required type="text" placeholder="First Name" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <input required type="text" placeholder="Last Name" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
+  <!-- Login Section -->
+  <section class="bg-gray-900 py-20 min-h-screen flex items-center justify-center relative">
+    <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-md overflow-hidden z-10">
+      <div class="px-6 py-8 text-center">
+        <h2 class="text-3xl font-bold text-teal-400 typewriter-text"><!-- typewriter --></h2> 
+        <p class="text-gray-400 mt-2">Sign in to your account</p>
       </div>
+      <form action="" method="POST" class="px-6 pb-6 space-y-6">
+        <div>
+          <label for="username" class="block text-base font-semibold text-gray-100">Username</label>
+          <input type="text" name="username" id="username" required
+            class="mt-2 w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-100 rounded-lg focus:ring-teal-400 focus:border-teal-400">
+        </div>
+        <div>
+          <label for="password" class="block text-base font-semibold text-gray-100">Password</label>
+          <input type="password" name="password" id="password" required
+            class="mt-2 w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-100 rounded-lg focus:ring-teal-400 focus:border-teal-400">
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center text-gray-400 text-sm">
+            <input type="checkbox" class="form-checkbox bg-gray-700 text-teal-400 rounded">
+            <span class="ml-2">Remember me</span>
+          </label>
+          <a href="forgot-password.html" class="text-sm text-teal-400 hover:underline">Forgot password?</a>
+        </div>
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br text-gray-900 font-bold py-2 rounded-lg shadow-lg hover:scale-105 transition-transform">
+          Login
+        </button>
+        <p class="text-gray-400 text-center text-sm mt-4">
+          Don’t have an account? <a href="signup.html" class="text-teal-400 hover:underline">Open Your Own Account</a>
+        </p>
+      </form>
     </div>
+  </section>
 
-    <!-- Step 3: Contact Information -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">Contact Information</h2>
-      <input id="phone-number" required type="text" placeholder="Phone Number (e.g., 600 600 600)" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <input id="email" required type="email" placeholder="Email Address" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <input id="confirm-email" required type="email" placeholder="Confirm Email Address" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <label class="flex items-center mt-4 text-gray-300">
-        <input type="checkbox" required class="mr-2"> Allow MOReserve to process personal data
-      </label>
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
-      </div>
-    </div>
+  <script>
+    // Typewriter Animation for Welcome Back
+    document.addEventListener("DOMContentLoaded", function () {
+    const textElement = document.querySelector(".typewriter-text");
+    const text = "Welcome Back";
+    let index = 0;
 
-    <!-- Step 4: Phone Code Confirmation -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">Phone Code Confirmation</h2>
-      <input required type="text" maxlength="6" placeholder="6-digit Code" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
-      </div>
-    </div>
+    function typeWriter() {
+      if (index < text.length) {
+        textElement.textContent += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 200);
+      } else {
+        textElement.classList.add("no-cursor");
+      }
+    }
 
-    <!-- Step 5: Date of Birth -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">Your Date of Birth</h2>
-      <input required type="date" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
-      </div>
-    </div>
+    typeWriter();
+  });
+  </script>
 
-    <!-- Step 6: Setup Account -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">Set Up Your Account</h2>
-      <input required type="text" placeholder="Username" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <input required type="password" minlength="16" placeholder="Password (min 16 characters)" class="input-field block bg-gray-800 rounded-lg text-gray-200">
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Next
-        </button>
-      </div>
-    </div>
-
-    <!-- Step 7: Agreement -->
-    <div class="step hidden">
-      <h2 class="text-2xl font-bold text-teal-400">Agreements</h2>
-      <label class="flex items-center mt-4 text-gray-300">
-        <input type="checkbox" required class="mr-2"> I have read and accept the Terms & Conditions
-      </label>
-      <div class="mt-6 flex justify-between">
-        <button class="back-btn px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600">
-          Back
-        </button>
-        <button class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Finish
-        </button>
-      </div>
-    </div>
-
-    <!-- Completion Step -->
-    <div class="step hidden">
-      <div class="text-center">
-        <h2 class="text-4xl font-bold text-teal-400 animate-bounce">🎉 Success! 🎉</h2>
-        <p class="text-gray-300 mt-4">Your account creation is pending.</p>
-        <ul class="mt-6 text-gray-300 text-left mx-auto list-disc">
-          <li>Check your email for confirmation.</li>
-          <li>Download our app for faster access.</li>
-          <li>Enjoy personalized banking experiences!</li>
-        </ul>
-        <button onclick="window.location.href='index.html'" class="mt-8 px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500">
-          Go to Homepage
-        </button>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
