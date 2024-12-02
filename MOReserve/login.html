@@ -25,7 +25,7 @@
         <h2 class="text-3xl font-bold text-teal-400 typewriter-text"><!-- typewriter --></h2> 
         <p class="text-gray-400 mt-2">Sign in to your account</p>
       </div>
-      <form action="" method="POST" class="px-6 pb-6 space-y-6">
+      <form action="static/src/php/checkPass.php" method="get" class="px-6 pb-6 space-y-6">
         <div>
           <label for="username" class="block text-base font-semibold text-gray-100">Username</label>
           <input type="text" name="username" id="username" required
@@ -44,6 +44,7 @@
           <a href="forgot-password.html" class="text-sm text-teal-400 hover:underline">Forgot password?</a>
         </div>
         <button type="submit"
+          onclick="Finalize()"
           class="w-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br text-gray-900 font-bold py-2 rounded-lg shadow-lg hover:scale-105 transition-transform">
           Login
         </button>

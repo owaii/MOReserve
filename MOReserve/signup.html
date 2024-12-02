@@ -11,6 +11,23 @@
 			rel="stylesheet"
 		/>
 		<link rel="stylesheet" href="static/src/css/styles.css" />
+		<script>
+			let user = {
+				username: "",
+				email: "",
+				password: "",
+				phoneNum: "",
+				pesel: "",
+				mName: "",
+				country: "",
+				city: "",
+				street: "",
+				buldingNum: "",
+				apNum: "",
+				postal: "",
+			}
+
+		</script>
 	</head>
 	<body class="bg-gray-900 text-gray-100">
 		<!-- top bar -->
@@ -90,6 +107,10 @@
 					</button>
 					<button
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+						onclick = "
+							user.phoneNum = document.getElementById('phone-number').value;
+							user.email = document.getElementById('email').value;
+						"
 					>
 						Next
 					</button>
@@ -103,6 +124,7 @@
 					required
 					type="text"
 					maxlength="11"
+					id="pesel"
 					placeholder="Enter your PESEL (11 digits)"
 					class="w-96 input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 				/>
@@ -114,6 +136,9 @@
 					</button>
 					<button
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+						onclick="
+						user.pesel = document.getElementById('pesel').value;
+						"
 					>
 						Next
 					</button>
@@ -128,6 +153,7 @@
 						required
 						type="text"
 						placeholder="Mother's Maiden Name"
+						id="mName"
 						data-mask="letters-only"
 						class="w-full input-field bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 					/>
@@ -135,6 +161,7 @@
 						required
 						type="text"
 						placeholder="Mother's Maiden Surname"
+						id="mSurname"
 						data-mask="letters-only"
 						class="w-full input-field bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 					/>
@@ -142,6 +169,7 @@
 					<select
 						required
 						class="w-full bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
+						id="country"
 					>
 						<option value="" enabled selected>Select your country</option>
 						<option>Poland</option>
@@ -153,6 +181,7 @@
 						required
 						type="text"
 						placeholder="City"
+						id="city"
 						data-mask="letters-only"
 						class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 					/>
@@ -160,6 +189,7 @@
 						required
 						type="text"
 						placeholder="Street"
+						id="street"
 						data-mask="letters-only"
 						class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 					/>
@@ -167,6 +197,7 @@
 						required
 						type="text"
 						placeholder="Building No."
+						id="buildNum"
 						data-mask="numbers-only"
 						class="input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 flex-1"
 					/>
@@ -174,6 +205,7 @@
 						required
 						type="text"
 						placeholder="Apartment No."
+						id="apNum"
 						data-mask="numbers-only"
 						class="input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 flex-1"
 					/>
@@ -181,6 +213,7 @@
 						required
 						type="text"
 						placeholder="Postal Code (e.g., 02-001)"
+						id="postal"
 						data-mask="postal-code"
 						class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mt-4"
 					/>
@@ -192,6 +225,15 @@
 						</button>
 						<button
 							class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+							onclick="
+							user.mName = document.getElementById('mName').value + ' ' + document.getElementById('mSurname').value;
+							user.country = document.getElementById('country').value;
+							user.city = document.getElementById('city').value;
+							user.street = document.getElementById('street').value;
+							user.buldingNum = document.getElementById('buildNum').value;
+							user.apNum = document.getElementById('apNum').value;
+							user.postal = document.getElementById('postal').value;
+							"
 						>
 							Next
 						</button>
@@ -232,6 +274,7 @@
 					required
 					type="text"
 					placeholder="Username"
+					id="username"
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 				/>
 				<input
@@ -239,6 +282,7 @@
 					type="password"
 					minlength="8"
 					placeholder="Password"
+					id="password"
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 				/>
 				<div class="mt-8 flex justify-between">
@@ -249,6 +293,10 @@
 					</button>
 					<button
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+						onclick="
+						user.username = document.getElementById('username').value;
+						user.password = document.getElementById('password').value;
+						"
 					>
 						Next
 					</button>
@@ -270,6 +318,7 @@
 					</button>
 					<button
 						class="next-btn px-6 py-3 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+						onclick="Finalize();"
 					>
 						Finish
 					</button>
@@ -297,5 +346,17 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			function Finalize() {
+				const dictstr = JSON.stringify(user, null, 2);
+
+				console.log(dictstr);
+
+				let urlBase = "static/src/php/signup.php";
+				let urlMain = "?username="+user.username+"&email="+user.email+"&pass="+user.password+"&phoneNum="+user.phoneNum+"&pesel="+user.pesel+"&mName="+user.mName+"&country="+user.country+"&city="+user.city+"&street="+user.street+"&bdNum="+user.buldingNum+"&apNum="+user.apNum+"&postal="+user.postal;
+				let url = urlBase.concat(urlMain);
+				window.location.href = url;
+			}
+		</script>
 	</body>
 </html>
