@@ -72,6 +72,17 @@
       }
     }
 
+    function userNameFiller() {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if (urlParams.get('login') != "") {
+        document.getElementById("username").value = urlParams.get('login');
+      }
+      
+      console.log(urlParams.get('login'));
+    }
+
+    userNameFiller();
     typeWriter();
   });
   </script>
