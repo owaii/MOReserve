@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(data => {
         if (data.status === 'success') {
             if (data.valid) {
-                console.log(data.valid);
-                return data.valid;
+                console.log("True");
+                return true;
             } else {
                 console.error("Error: " + data.message);
                 return false;
