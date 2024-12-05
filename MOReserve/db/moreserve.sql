@@ -28,12 +28,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounts` (
-  `account_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `account_number` char(16) NOT NULL,
-  `account_type` enum('Savings','Checking','Business') NOT NULL,
+  `accountId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
   `balance` decimal(15,2) DEFAULT 0.00,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -43,14 +41,13 @@ CREATE TABLE `accounts` (
 --
 
 CREATE TABLE `cards` (
-  `card_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `card_number` char(16) NOT NULL,
-  `card_type` varchar(32) NOT NULL,
-  `expiration_date` date NOT NULL,
-  `cardholder_name` varchar(100) NOT NULL,
+  `cardId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `cardNumber` char(16) NOT NULL,
+  `expirationDate` date NOT NULL,
+  `cardholderName` varchar(100) NOT NULL,
   `status` varchar(32) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -60,10 +57,10 @@ CREATE TABLE `cards` (
 --
 
 CREATE TABLE `dashboard_data` (
-  `dashboard_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `monthly_spending` decimal(15,2) DEFAULT 0.00,
-  `monthly_income` decimal(15,2) DEFAULT 0.00
+  `dashboardId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `monthlySpending` decimal(15,2) DEFAULT 0.00,
+  `monthlyIncome` decimal(15,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -73,12 +70,11 @@ CREATE TABLE `dashboard_data` (
 --
 
 CREATE TABLE `transactions` (
-  `transaction_id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `transaction_type` enum('Credit','Debit') NOT NULL,
+  `transactionId` int(11) NOT NULL,
+  `accountId` int(11) NOT NULL,
   `amount` decimal(15,2) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -88,32 +84,34 @@ CREATE TABLE `transactions` (
 --
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `surname` varchar(100) NOT NULL,
+  `pesel` char(11) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `phone_number` varchar(15) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `last_login` date DEFAULT NULL
+  `passwordHash` varchar(255) NOT NULL,
+  `phoneNumber` varchar(15) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lastLogin` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `user_details`
+-- Struktura tabeli dla tabeli `userDetails`
 --
 
 CREATE TABLE `user_details` (
-  `detail_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `pesel` char(11) NOT NULL,
-  `mothers_maiden_name` varchar(100) NOT NULL,
+  `detailId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `mothersMaidenName` varchar(100) NOT NULL,
   `country` varchar(50) NOT NULL,
   `city` varchar(50) NOT NULL,
   `street` varchar(100) NOT NULL,
-  `building_number` varchar(10) DEFAULT NULL,
-  `apartment_number` varchar(10) DEFAULT NULL,
-  `postal_code` varchar(10) NOT NULL
+  `buildingNumber` varchar(10) DEFAULT NULL,
+  `apartmentNumber` varchar(10) DEFAULT NULL,
+  `postalCode` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -124,47 +122,48 @@ CREATE TABLE `user_details` (
 -- Indeksy dla tabeli `accounts`
 --
 ALTER TABLE `accounts`
-  ADD PRIMARY KEY (`account_id`),
-  ADD UNIQUE KEY `account_number` (`account_number`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`accountId`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indeksy dla tabeli `cards`
 --
 ALTER TABLE `cards`
-  ADD PRIMARY KEY (`card_id`),
-  ADD UNIQUE KEY `card_number` (`card_number`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`cardId`),
+  ADD UNIQUE KEY `cardNumber` (`cardNumber`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indeksy dla tabeli `dashboard_data`
 --
 ALTER TABLE `dashboard_data`
-  ADD PRIMARY KEY (`dashboard_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`dashboardId`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indeksy dla tabeli `transactions`
 --
 ALTER TABLE `transactions`
-  ADD PRIMARY KEY (`transaction_id`),
-  ADD KEY `account_id` (`account_id`);
+  ADD PRIMARY KEY (`transactionId`),
+  ADD KEY `accountId` (`accountId`);
 
 --
 -- Indeksy dla tabeli `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`),
+  ADD PRIMARY KEY (`userId`),
   ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `surname` (`surname`),
+  ADD UNIQUE KEY `pesel` (`pesel`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indeksy dla tabeli `user_details`
+-- Indeksy dla tabeli `userDetails`
 --
 ALTER TABLE `user_details`
-  ADD PRIMARY KEY (`detail_id`),
-  ADD UNIQUE KEY `pesel` (`pesel`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`detailId`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -174,37 +173,37 @@ ALTER TABLE `user_details`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `accountId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `cards`
 --
 ALTER TABLE `cards`
-  MODIFY `card_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cardId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dashboard_data`
 --
 ALTER TABLE `dashboard_data`
-  MODIFY `dashboard_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `dashboardId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `transactionId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `user_details`
+-- AUTO_INCREMENT for table `userDetails`
 --
 ALTER TABLE `user_details`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `detailId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -214,31 +213,31 @@ ALTER TABLE `user_details`
 -- Constraints for table `accounts`
 --
 ALTER TABLE `accounts`
-  ADD CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `cards`
 --
 ALTER TABLE `cards`
-  ADD CONSTRAINT `cards_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `cards_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `dashboard_data`
 --
 ALTER TABLE `dashboard_data`
-  ADD CONSTRAINT `dashboard_data_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `dashboard_data_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `transactions`
 --
 ALTER TABLE `transactions`
-  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`accountId`) ON DELETE CASCADE;
 
 --
--- Constraints for table `user_details`
+-- Constraints for table `userDetails`
 --
 ALTER TABLE `user_details`
-  ADD CONSTRAINT `user_details_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `userDetails_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

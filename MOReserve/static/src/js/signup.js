@@ -23,8 +23,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const visibleInputs = stepContainer.querySelectorAll("input:required:not([type='hidden']), select:required");
   let isValid = true;
 
+  const checkServerValidation = async (value, id) => {
+    console.log("Checking: " + value + " for id: " + id);
+
+    fetch(`static/src/php/checkValues.php?value=${encodeURIComponent(value)}&id=${encodeURIComponent(id)}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (data.valid) {
+                console.log(data.valid);
+                return data.valid;
+            } else {
+                console.error("Error: " + data.message);
+                return false;
+            }
+        }
+    })
+    .catch(error => {
+        console.error("Request failed", error);
+        return false;
+    });
+  };
+
   visibleInputs.forEach(input => {
     if (!input.checkValidity()) {
+      input.classList.add("border-red-500");
+      console.log(`Validation failed for: ${input.placeholder || input.name || 'Unnamed field'}`);
+      console.log(`Value: "${input.value}"`);
+      console.log(`Error: ${input.validationMessage}`);
+      isValid = false;
+    } else {
+      input.classList.remove("border-red-500");
+    }
+
+    if (checkServerValidation(input.value, input.id) == false) {
       input.classList.add("border-red-500");
       console.log(`Validation failed for: ${input.placeholder || input.name || 'Unnamed field'}`);
       console.log(`Value: "${input.value}"`);
@@ -86,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const phoneNumberInput = document.querySelector("#phone-number");
+  const phoneNumberInput = document.querySelector("#phoneNumber");
   if (phoneNumberInput) {
     phoneNumberInput.addEventListener("input", (e) => {
       const input = e.target.value.replace(/\D/g, "").slice(0, 9);
