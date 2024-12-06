@@ -22,7 +22,7 @@
   <section class="bg-gray-900 py-20 min-h-screen flex items-center justify-center relative">
     <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-md overflow-hidden z-10">
       <div class="px-6 py-8 text-center">
-        <h2 class="text-3xl font-bold text-teal-400 typewriter-text"><!-- typewriter --></h2> 
+        <h2 class="text-3xl font-bold text-teal-400 typewriter-text" text="Welcome Back" delay="200"><!-- typewriter --></h2> 
         <p class="text-gray-400 mt-2">Sign in to your account</p>
       </div>
       <form action="static/src/php/checkPass.php" method="get" class="px-6 pb-6 space-y-6">
@@ -54,38 +54,6 @@
       </form>
     </div>
   </section>
-
-  <script>
-    // Typewriter Animation for Welcome Back
-    document.addEventListener("DOMContentLoaded", function () {
-    const textElement = document.querySelector(".typewriter-text");
-    const text = "Welcome Back";
-    let index = 0;
-
-    function typeWriter() {
-      if (index < text.length) {
-        textElement.textContent += text.charAt(index);
-        index++;
-        setTimeout(typeWriter, 200);
-      } else {
-        textElement.classList.add("no-cursor");
-      }
-    }
-
-    function userNameFiller() {
-      const urlParams = new URLSearchParams(window.location.search);
-
-      if (urlParams.get('login') != "") {
-        document.getElementById("username").value = urlParams.get('login');
-      }
-      
-      console.log(urlParams.get('login'));
-    }
-
-    userNameFiller();
-    typeWriter();
-  });
-  </script>
-
+  <script src="static/src/js/typewriter.js"></script>
 </body>
 </html>

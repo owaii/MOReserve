@@ -13,19 +13,17 @@
 		<link rel="stylesheet" href="static/src/css/styles.css" />
 		<script>
 			let user = {
-				name: "",
-				surname: "",
 				username: "",
-				password: "",
 				email: "",
+				password: "",
 				phoneNum: "",
 				pesel: "",
 				mName: "",
 				country: "",
 				city: "",
 				street: "",
-				buldingNumber: "",
-				apNumber: "",
+				buldingNum: "",
+				apNum: "",
 				postal: "",
 			}
 
@@ -77,9 +75,8 @@
 			<div class="step hidden">
 				<h2 class="text-3xl font-bold text-teal-400">Contact Information</h2>
 				<input
-					id="phoneNumber"
+					id="phone-number"
 					required
-					maxlength="9"
 					type="text"
 					placeholder="Phone Number (e.g., 600 600 600)"
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
@@ -92,7 +89,7 @@
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 				/>
 				<input
-					id="confirmEmail"
+					id="confirm-email"
 					required
 					type="email"
 					placeholder="Confirm Email Address"
@@ -111,7 +108,7 @@
 					<button
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
 						onclick = "
-							user.phoneNum = document.getElementById('phoneNumber').value;
+							user.phoneNum = document.getElementById('phone-number').value;
 							user.email = document.getElementById('email').value;
 						"
 					>
@@ -143,41 +140,6 @@
 						user.pesel = document.getElementById('pesel').value;
 						"
 					>
-						Next
-					</button>
-				</div>
-			</div>
-
-			<!-- step 3 -->
-			<div class="step hidden">
-				<h2 class="text-3xl font-bold text-teal-400">Personal Data</h2>
-				<input
-					required
-					type="text"
-					id="name"
-					placeholder="name"
-					class="w-96 input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
-				/>
-				<input
-					required
-					type="text"
-					id="surname"
-					placeholder="surname"
-					class="w-96 input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
-				/>
-				<div class="mt-8 flex justify-between">
-					<button
-						class="back-btn px-8 py-4 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600"
-					>
-						Back
-					</button>
-					<button
-						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
-						onclick = "
-							user.name = document.getElementById('name').value;
-							user.surname = document.getElementById('surname').value;
-						"
-						>
 						Next
 					</button>
 				</div>
@@ -268,8 +230,8 @@
 							user.country = document.getElementById('country').value;
 							user.city = document.getElementById('city').value;
 							user.street = document.getElementById('street').value;
-							user.buldingNumber = document.getElementById('buildNum').value;
-							user.apNumber = document.getElementById('apNum').value;
+							user.buldingNum = document.getElementById('buildNum').value;
+							user.apNum = document.getElementById('apNum').value;
 							user.postal = document.getElementById('postal').value;
 							"
 						>
@@ -387,10 +349,11 @@
 		<script>
 			function Finalize() {
 				const dictstr = JSON.stringify(user, null, 2);
+
 				console.log(dictstr);
 
 				let urlBase = "static/src/php/signup.php";
-				let urlMain = "?username="+user.username+"&name="+user.name+"&surname="+user.surname+"&email="+user.email+"&pass="+user.password+"&phoneNum="+user.phoneNum+"&pesel="+user.pesel+"&mName="+user.mName+"&country="+user.country+"&city="+user.city+"&street="+user.street+"&bdNum="+user.buldingNumber+"&apNum="+user.apNumber+"&postal="+user.postal;
+				let urlMain = "?username="+user.username+"&email="+user.email+"&pass="+user.password+"&phoneNum="+user.phoneNum+"&pesel="+user.pesel+"&mName="+user.mName+"&country="+user.country+"&city="+user.city+"&street="+user.street+"&bdNum="+user.buldingNum+"&apNum="+user.apNum+"&postal="+user.postal;
 				let url = urlBase.concat(urlMain);
 				window.location.href = url;
 			}

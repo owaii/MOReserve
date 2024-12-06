@@ -1,81 +1,83 @@
 <?php
+// Create a connection to the database
+$db = new mysqli('localhost', 'root', '', 'more');
 
-    $db = new mysqli("localhost", "root", "", "more");
+// Check if the connection was successful
+if ($db->connect_error) {
+    die("Connection failed: " . $db->connect_error);
+}
 
-    if ($db->connect_error) {
-        throw new Exception("Database connection failed: " . $db->connect_error);
+// Retrieve values from the URL using $_GET (check if they are set to avoid undefined index)
+$username = isset($_GET['username']) ? $_GET['username'] : '';
+$email = isset($_GET['email']) ? $_GET['email'] : '';
+$password = isset($_GET['pass']) ? $_GET['pass'] : '';
+$phoneNum = isset($_GET['phoneNum']) ? $_GET['phoneNum'] : '';
+$pesel = isset($_GET['pesel']) ? $_GET['pesel'] : '';
+$mName = isset($_GET['mName']) ? $_GET['mName'] : '';
+$country = isset($_GET['country']) ? $_GET['country'] : '';
+$city = isset($_GET['city']) ? $_GET['city'] : '';
+$street = isset($_GET['street']) ? $_GET['street'] : '';
+$bdNum = isset($_GET['bdNum']) ? $_GET['bdNum'] : '';
+$apNum = isset($_GET['apNum']) ? $_GET['apNum'] : '';
+$postal = isset($_GET['postal']) ? $_GET['postal'] : '';
+
+// Hash the password
+$hashedpass = password_hash($password, PASSWORD_DEFAULT);
+$createdAt = date('Y-m-d');
+$lastLogin = $createdAt;
+
+// Prepare an SQL statement to insert into the users table
+$stmt = $db->prepare("
+    INSERT INTO users (username, email, password_hash, phone_number, created_at, last_login)
+    VALUES (?, ?, ?, ?, ?, ?)
+");
+
+// Check if the preparation was successful
+if ($stmt === false) {
+    die("Failed to prepare query: " . $db->error);
+}
+
+// Bind parameters to the SQL query (all values are strings except for the dates)
+$stmt->bind_param(
+    "ssssss", // 's' denotes string type for each parameter
+    $username, $email, $hashedpass, $phoneNum, $createdAt, $lastLogin
+);
+
+// Execute the query
+if ($stmt->execute()) {
+    echo "User created successfully!<br>";
+
+    // Get the inserted user's ID
+    $user_id = $db->insert_id;
+
+    // Prepare an SQL statement to insert into the user_details table
+    $stmt_details = $db->prepare("
+        INSERT INTO user_details (user_id, pesel, mothers_maiden_name, country, city, street, building_number, apartment_number, postal_code)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    // Bind parameters for the second statement
+    $stmt_details->bind_param(
+        "issssssss", // 'i' for integer and 's' for strings
+        $user_id, $pesel, $mName, $country, $city, $street, $bdNum, $apNum, $postal
+    );
+
+    // Execute the second query to insert user details
+    if ($stmt_details->execute()) {
+        echo "User details added successfully!";
+    } else {
+        echo "Error adding user details: " . $stmt_details->error;
     }
 
-    $username = $_GET['username'] ?? '';
-    $name = $_GET['name'] ?? '';
-    $surname = $_GET['surname'] ?? '';
-    $email = $_GET['email'] ?? '';
-    $password = $_GET['pass'] ?? '';
-    $phoneNum = $_GET['phoneNum'] ?? '';
-    $pesel = $_GET['pesel'] ?? '';
-    $mName = $_GET['mName'] ?? '';
-    $country = $_GET['country'] ?? '';
-    $city = $_GET['city'] ?? '';
-    $street = $_GET['street'] ?? '';
-    $bdNum = $_GET['bdNum'] ?? '';
-    $apNum = $_GET['apNum'] ?? '';
-    $postal = $_GET['postal'] ?? '';
+    // Close the user_details statement
+    $stmt_details->close();
 
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $createdAt = date('Y-m-d');
-    $lastLogin = $createdAt;
+} else {
+    echo "Error adding user: " . $stmt->error;
+}
 
-    $db->begin_transaction();
+// Close the main statement and database connection
+$stmt->close();
+$db->close();
 
-    $stmt = $db->prepare("INSERT INTO users (username, name, surname, pesel, email, passwordHash, phoneNumber, createdAt, lastLogin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssss", $username, $name, $surname, $pesel, $email, $hashedPassword, $phoneNum, $createdAt, $lastLogin);
-    if (!$stmt->execute()) {
-        throw new Exception("Error adding user: " . $stmt->error);
-    }
-
-    $userId = $db->insert_id;
-    $stmt->close();
-
-    $stmtDetails = $db->prepare("INSERT INTO user_details (userId, mothersMaidenName, country, city, street, buildingNumber, apartmentNumber, postalCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmtDetails->bind_param("isssssss", $userId, $mName, $country, $city, $street, $bdNum, $apNum, $postal);
-    if (!$stmtDetails->execute()) {
-        throw new Exception("Error adding user details: " . $stmtDetails->error);
-    }
-    $stmtDetails->close();
-
-    $balance = 0;
-    $stmtAccount = $db->prepare("INSERT INTO accounts (userId, balance, createdAt) VALUES (?, ?, ?)");
-    $stmtAccount->bind_param("iis", $userId, $balance, $createdAt);
-    if (!$stmtAccount->execute()) {
-        throw new Exception("Error adding account: " . $stmtAccount->error);
-    }
-    $stmtAccount->close();
-
-    $result = $db->query("SELECT cardNumber FROM cards ORDER BY cardId DESC LIMIT 1");
-    $lastCardNumber = $result->fetch_assoc()['card_number'] ?? '7000000000';
-    $cardNumber = (int)$lastCardNumber + 1;
-    while (substr((string)$cardNumber, 0, 1) !== '7') {
-        $cardNumber++;
-    }
-
-    $expirationDate = date('Y-m-d', strtotime('+5 years'));
-    $cardholderName = $name . " " . $surname;
-
-    $stmtCard = $db->prepare("INSERT INTO cards (userId, cardNumber, expirationDate, cardholderName, status, createdAt) VALUES (?, ?, ?, ?, ?, ?)");
-    $status = 'active';
-    $stmtCard->bind_param("iissss", $userId, $cardNumber, $expirationDate, $cardholderName, $status, $createdAt);
-    if (!$stmtCard->execute()) {
-        throw new Exception("Error adding card: " . $stmtCard->error);
-    }
-    $stmtCard->close();
-
-    $db->commit();
-
-    echo "User, details, account, and card created successfully!";
-    header("Location: ../../../login.html");
-
-    if (isset($db)) {
-        $db->close();
-    }
-
-?>
+header("../../../login.html");

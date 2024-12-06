@@ -29,10 +29,9 @@
   <section class="bg-gray-900 py-20">
     <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
       <div class="md:w-1/2">
-        <h2 class="text-4xl md:text-5xl font-bold text-teal-400 leading-tight typewriter-text">
+        <h2 class="text-4xl md:text-5xl font-bold text-teal-400 leading-tight typewriter-text" text="Banking Designed for the Future">
           <!--Banking Designed for the Future-->
         </h2>
-        
         <p class="text-lg text-gray-400 mt-4">
           At MOReserve, we bring modern banking solutions to your fingertips. Manage accounts, secure loans, and enjoy seamless transactions—all from the comfort of your device.
         </p>
@@ -197,25 +196,6 @@
     </div>
   </footer>
 
+<script src="static/src/js/typewriter.js"></script>
 </body>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const textElement = document.querySelector(".typewriter-text");
-    const text = "Banking Designed for the Future.";
-    let index = 0;
-
-    function typeWriter() {
-      if (index < text.length) {
-        textElement.textContent += text.charAt(index);
-        index++;
-        setTimeout(typeWriter, 100);
-      } else {
-        textElement.classList.add("no-cursor");
-      }
-    }
-
-    typeWriter();
-  });
-</script>
-
 </html>
