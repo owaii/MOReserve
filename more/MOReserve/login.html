@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOReserve - Login</title>
+  <link rel="shortcut icon" type="image/x-icon" href="static/img/favicon.ico"/>
+  <link rel="stylesheet" href="static/src/css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-gray-100 overflow-hidden">
+
+  <!-- Header -->
+  <header class="bg-gray-800 shadow-lg navbar-sticky">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="index.html"><img src="static/img/logo.png" alt="MOReserve Logo" class="h-12 w-auto object-contain"></a>
+    </div>
+  </header>
+
+  <!-- Login Section -->
+  <section class="bg-gray-900 py-20 min-h-screen flex items-center justify-center relative">
+    <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-md overflow-hidden z-10">
+      <div class="px-6 py-8 text-center">
+        <h2 class="text-3xl font-bold text-teal-400 typewriter-text"><!-- typewriter --></h2> 
+        <p class="text-gray-400 mt-2">Sign in to your account</p>
+      </div>
+      <form action="static/src/php/checkPass.php" method="get" class="px-6 pb-6 space-y-6">
+        <div>
+          <label for="username" class="block text-base font-semibold text-gray-100">Username</label>
+          <input type="text" name="username" id="username" required
+            class="mt-2 w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-100 rounded-lg focus:ring-teal-400 focus:border-teal-400">
+        </div>
+        <div>
+          <label for="password" class="block text-base font-semibold text-gray-100">Password</label>
+          <input type="password" name="password" id="password" required
+            class="mt-2 w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-100 rounded-lg focus:ring-teal-400 focus:border-teal-400">
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center text-gray-400 text-sm">
+            <input type="checkbox" class="form-checkbox bg-gray-700 text-teal-400 rounded">
+            <span class="ml-2">Remember me</span>
+          </label>
+          <a href="forgot-password.html" class="text-sm text-teal-400 hover:underline">Forgot password?</a>
+        </div>
+        <button type="submit"
+          onclick="Finalize()"
+          class="w-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br text-gray-900 font-bold py-2 rounded-lg shadow-lg hover:scale-105 transition-transform">
+          Login
+        </button>
+        <p class="text-gray-400 text-center text-sm mt-4">
+          Don’t have an account? <a href="signup.html" class="text-teal-400 hover:underline">Open Your Own Account</a>
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    // Typewriter Animation for Welcome Back
+    document.addEventListener("DOMContentLoaded", function () {
+    const textElement = document.querySelector(".typewriter-text");
+    const text = "Welcome Back";
+    let index = 0;
+
+    function typeWriter() {
+      if (index < text.length) {
+        textElement.textContent += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 200);
+      } else {
+        textElement.classList.add("no-cursor");
+      }
+    }
+
+    function userNameFiller() {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if (urlParams.get('login') != "") {
+        document.getElementById("username").value = urlParams.get('login');
+      }
+      
+      console.log(urlParams.get('login'));
+    }
+
+    userNameFiller();
+    typeWriter();
+  });
+  </script>
+
+</body>
+</html>
