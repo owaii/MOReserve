@@ -1,2 +1,0 @@
-# MOReserve
-Project for school
