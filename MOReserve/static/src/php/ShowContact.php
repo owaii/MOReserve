@@ -1,17 +1,19 @@
 <?php 
 $data = array();
 
-header('Content-Type: application/json'); // Set the correct header
-
-// Database connection
 $db = new mysqli("localhost", "root", "", "more");
 
-// Check for connection errors
 if ($db->connect_error) {
     die(json_encode(["success" => false, "message" => "Database connection failed: " . $db->connect_error]));
 }
 
-$userID = $_GET["id"];
+$input = json_decode(file_get_contents("php://input"), true);
+$id = intval($input['id'] ?? 0);
+
+if ($id <= 0) {
+    echo json_encode(["success" => false, "message" => "Invalid user ID provided."]);
+    exit;
+}
 
 $stmt = $db->prepare("
     SELECT f.userID as userID, f.friendID as friendID, f.transactions as transactions, 
@@ -20,20 +22,24 @@ $stmt = $db->prepare("
     JOIN users ON f.friendID = users.id 
     WHERE f.userID = ?
 ");
-$stmt->bind_param("i", $userID);
+$stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        array_push($data, $row); // Populate the $data array with each row
+        $data[] = [
+            'id' => $row['friendID'],
+            'name' => $row['name'] . ' ' . $row['surname'],
+            'pfp' => "static/img/users/pfp/" . ($row['icon'] ?: 'astrid.webp'),
+            'transactions' => $row['transactions']
+        ];
     }
     echo json_encode(["success" => true, "data" => $data]);
 } else {
-    echo json_encode(["success" => false, "message" => "No friends found for the given userID"]);
+    echo json_encode(["success" => false, "message" => "No contacts found for the given userID"]);
 }
 
-// Close the database connection
 $db->close();
 ?>

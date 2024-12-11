@@ -1,31 +1,35 @@
-<?php 
-	// Establishing the database connection
-	$db = new mysqli("localhost", "root", "", "more");
+<?php
+$db = new mysqli("localhost", "root", "", "more");
 
-	// Checking if the connection was successful
-	if ($db->connect_error) {
-		die("Connection failed: " . $db->connect_error);
-	}
+if ($db->connect_error) {
+    die("Connection failed: " . $db->connect_error);
+}
 
-	// Getting the new username and the user ID from the URL parameters
-	$username = $_GET["newVal"];
-	$id = $_GET["id"];
+$input = json_decode(file_get_contents("php://input"), true);
+$id = intval($input['id'] ?? 0);
+$newEmail = $input['newEmail'] ?? '';
 
-	// Prepare the SQL query to update the username
-	$stmt = $db->prepare("UPDATE users SET email = ? WHERE id = ?;");
-	$stmt->bind_param("si", $username, $id);
+if ($id <= 0 || empty($newEmail)) {
+    echo json_encode(["success" => false, "error" => "Invalid input parameters."]);
+    $db->close();
+    exit;
+}
 
-	// Executing the query
-	if ($stmt->execute()) {
-		// Redirecting to the settings page after a successful update
-		header("Location: ../../../dashboard.php?page=settings&id=".$id);
-		exit();  // Ensure the script stops execution after the redirect
-	} else {
-		// Handle any errors during the execution
-		echo "Error: " . $stmt->error;
-	}
+$stmt = $db->prepare("SELECT email FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
 
-	// Closing the statement and connection
-	$stmt->close();
-	$db->close();
+if ($result->num_rows > 0) {
+    $stmt = $db->prepare("UPDATE users SET email = ? WHERE id = ?");
+    $stmt->bind_param("si", $newEmail, $id);
+    $stmt->execute();
+    $stmt->close();
+    echo json_encode(["success" => true, "message" => "Email updated successfully."]);
+} else {
+    echo json_encode(["success" => false, "error" => "User not found."]);
+}
+
+$db->close();
 ?>

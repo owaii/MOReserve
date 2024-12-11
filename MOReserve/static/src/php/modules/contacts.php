@@ -69,9 +69,9 @@
 <script>
     const urlParam = new URLSearchParams(window.location.search);
     const id = urlParam.get("id");
+
     function contactsApp() {
         return {
-
             searchQuery: '',
             contacts: [],
             filteredContacts() {
@@ -83,82 +83,90 @@
             showContactModal: false,
             showTransactionModal: false,
 
-            // Fetch and display contacts
             async ShowContacts() {
                 try {
-                    const response = await fetch(`static/src/php/ShowContacts.php?&id=${id}`);
-                    if (!response.ok) throw new Error('HTTP error! Status: ' + response.status);
-
-                    const text = await response.text();
-                    console.log("Raw response text:", text);
-
-                    const data = JSON.parse(text);
-                    if (data.success === false) {
-                        console.error("Error from server:", data.message || "Unknown error");
-                        return;
-                    }
-
-                    this.contacts = data.data.map(contact => ({
-                        name: `${contact.name} ${contact.surname}`,
-                        transactions: contact.transactions,
-                    }));
-
-                    console.log("Contacts successfully updated:", this.contacts);
+                    const respone = await fetch("static/src/php/showContact.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                console.log("Data succeded");
+                                this.contacts.push() = data || [];
+                            } else {
+                                alert("Failed to load contacts: " + data.error);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                            alert("An error occurred while fetching contacts. Please try again.");
+                        });
                 } catch (error) {
-                    console.error("Error fetching contacts:", error);
+                    console.error("Error fetching data:", error);
+                    alert("Failed to add contact. Please try again later.");
                 }
             },
 
-            // Add a new contact
             async addContact() {
                 const phone = this.newContact.phone;
+
                 if (!phone) {
                     alert("Please enter a phone number.");
                     return;
                 }
 
                 try {
-                    const response = await fetch(`static/src/php/checkContact.php?val=${phone}&id=${id}`);
-                    if (!response.ok) throw new Error('HTTP error! Status: ' + response.status);
-
-                    const text = await response.text();
-                    console.log("Raw response text:", text);
-
-                    const data = JSON.parse(text);
-                    if (data.success === false) {
-                        console.error("Error from server:", data.error);
-                        alert(`Error: ${data.error}`);
-                        return;
-                    }
-
-                    this.contacts.push({
-                        id: this.contacts.length + 1,
-                        name: `${data.data["name"]} ${data.data["surname"]}`,
-                        pfp: `static/img/users/pfp/${data.data["icon"] || 'astrid.webp'}`,
-                        transactions: data.data["transactions"] || 0,
-                    });
-
-                    alert("Contact added successfully.");
+                    const respone = await fetch("static/src/php/checkContact.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            val: phone,
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                alert("Contact added successfully!");
+                                this.contacts.push({
+                                    id: this.contacts.length + 1,
+                                    name: `${data["name"]} ${data["surname"]}`,
+                                    pfp: `static/img/users/pfp/${data["icon"] || 'astrid.webp'}`,
+                                    transactions: data["transactions"] || 0,
+                                });
+                            } else {
+                                alert("Failed to add contact: " + data.error);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                            alert("An error occurred. Please try again.");
+                        });
                 } catch (error) {
                     console.error("Error fetching data:", error);
                     alert("Failed to add contact. Please try again later.");
                 } finally {
-                    this.newContact.phone = ''; // Clear the phone input field
+                    this.newContact.phone = '';
                 }
             },
 
-            // View contact details
             viewContact(contact) {
                 this.selectedContact = contact;
                 this.showContactModal = true;
             },
 
-            // Close contact modal
             closeContactModal() {
                 this.showContactModal = false;
             },
 
-            // Open and close transaction modal
             openTransactionModal() {
                 this.showTransactionModal = true;
             },
@@ -166,13 +174,17 @@
                 this.showTransactionModal = false;
             },
 
-            // Confirm transaction
             confirmTransaction() {
                 alert(`Transaction confirmed for ${this.transaction.phone}`);
-                
+
                 this.transaction = { phone: '', description: '', amount: '' }; // Clear fields
                 this.closeTransactionModal();
             },
         };
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const app = contactsApp();
+        app.ShowContacts();  // Load contacts on page load
+    });
 </script>

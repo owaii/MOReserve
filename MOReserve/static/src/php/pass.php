@@ -1,52 +1,42 @@
 <?php
-// Database connection
 $db = new mysqli("localhost", "root", "", "more");
 
-// Check for connection errors
 if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
 
-// Get the form data (new password, old password, and user ID)
-$oldPassword = $_POST["oldVal"];
-$newPassword = $_POST["newVal"];
-$id = $_GET["id"];
+$input = json_decode(file_get_contents("php://input"), true);
+$id = intval($input['id'] ?? 0);
+$currentPassword = $input['currentPassword'] ?? '';
+$newPassword = $input['newPassword'] ?? '';
 
-// Prepare a statement to retrieve the current hashed password from the database
+if ($id <= 0 || empty($currentPassword) || empty($newPassword)) {
+    echo json_encode(["success" => false, "error" => "Invalid input parameters."]);
+    $db->close();
+    exit;
+}
+
 $stmt = $db->prepare("SELECT password FROM users WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
-// Check if the user exists
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $hashedPassword = $row["password"];
-
-    // Verify the old password with the hashed password
-    if (password_verify($oldPassword, $hashedPassword)) {
-        // If the old password is correct, hash the new password and update it
-        $newHashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-        // Update the password in the database
+    if (password_verify($currentPassword, $row["password"])) {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $stmt->bind_param("si", $newHashedPassword, $id);
-        
-        if ($stmt->execute()) {
-            // Redirect to settings page after successful password update
-            header("Location: ../../../dashboard.php?page=settings&id=" . $id);
-            exit();
-        } else {
-            echo "Error: " . $stmt->error;
-        }
+        $stmt->bind_param("si", $hashedPassword, $id);
+        $stmt->execute();
+        $stmt->close();
+        echo json_encode(["success" => true, "message" => "Password updated successfully."]);
     } else {
-        die("Error: Current password is incorrect.");
+        echo json_encode(["success" => false, "error" => "Incorrect current password."]);
     }
 } else {
-    echo "Error: User not found.";
+    echo json_encode(["success" => false, "error" => "User not found."]);
 }
 
-// Close the database connection
 $db->close();
 ?>

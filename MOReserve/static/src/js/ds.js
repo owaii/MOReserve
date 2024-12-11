@@ -25,10 +25,8 @@ const user = {
     postal: "",
 };
 
-// Initialize and fetch data
 const Init = async () => {
     try {
-        // Get the user ID from the URL parameters
         const urlParam = new URLSearchParams(window.location.search);
         const id = urlParam.get("id");
 
@@ -39,7 +37,6 @@ const Init = async () => {
 
         console.log("User ID: " + id);
 
-        // Fetch the user data from the PHP backend
         const response = await fetch(`static/src/php/init.php?id=${id}`);
 
         if (!response.ok) {
@@ -55,7 +52,6 @@ const Init = async () => {
 
         console.log("Fetched Data:", data);
 
-        // Update the user object with the fetched data
         Object.keys(user).forEach(key => {
             if (data.data[key] !== undefined) {
                 user[key] = data.data[key];
@@ -77,16 +73,13 @@ const Init = async () => {
 
         console.log("Updated User Object:", JSON.stringify(user, null, 2));
 
-        // Call the function to update the UI with user data
         updateUI();
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 };
 
-// Function to update the UI with the user data
 function updateUI() {
-    // Loop through each key in the user object and update the corresponding DOM element
     Object.keys(user).forEach(key => {
         const element = document.getElementById(key);
         if (element) {

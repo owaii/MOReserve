@@ -1,58 +1,55 @@
 <?php
-header('Content-Type: application/json'); // Set the correct header
-
-// Database connection
 $db = new mysqli("localhost", "root", "", "more");
 
-$val = (int)$_GET["val"];
-$userID = $_GET["id"];
+if ($db->connect_error) {
+    die(json_encode(["success" => false, "message" => "Connection failed: " . $db->connect_error]));
+}
 
-$stmt = $db->prepare("
-    SELECT id FROM users WHERE phoneNumber = ?
-");
-$stmt->bind_param("i", $val);
+$input = json_decode(file_get_contents("php://input"), true);
+$id = intval($input['id'] ?? 0);
+$value = strval($input['val'] ?? '');
+
+if (empty($value)) {
+    echo json_encode(["success" => false, "message" => "Phone number is required."]);
+    exit;
+}
+
+$stmt = $db->prepare("SELECT id FROM users WHERE phoneNumber = ?");
+$stmt->bind_param("s", $value);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
 if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc(); // Fetch the row
-    $id = $row["id"];
+    $row = $result->fetch_assoc();
+    $friendID = $row["id"];
 
-    // Check if the user is already a friend
-    $stmt = $db->prepare("
-        SELECT * FROM friends WHERE userID = ? AND friendID = ?;
-    ");
-    $stmt->bind_param("ii", $userID, $id);
+    $stmt = $db->prepare("SELECT * FROM friends WHERE userID = ? AND friendID = ?");
+    $stmt->bind_param("ii", $id, $friendID);
     $stmt->execute();
-    $result = $stmt->get_result(); // Get the result before closing the statement
+    $result = $stmt->get_result();
     $stmt->close();
 
     if ($result->num_rows > 0) {
-        echo json_encode(["success" => false, "error" => "User already added"]);
+        echo json_encode(["success" => false, "message" => "User already added"]);
         exit;
     }
 
-    // Add the user as a friend
-    $stmt = $db->prepare("
-        INSERT INTO friends (userID, friendID, transactions) 
-        VALUES (?, ?, 0)
-    ");
-    $stmt->bind_param("ii", $userID, $id);
+    $stmt = $db->prepare("INSERT INTO friends (userID, friendID, transactions) VALUES (?, ?, 0)");
+    $stmt->bind_param("ii", $id, $friendID);
     $stmt->execute();
     $stmt->close();
 
-    // Return the updated list of friends
     $stmt = $db->prepare("
         SELECT f.userID as userID, f.friendID as friendID, f.transactions as transactions, 
                users.icon as icon, users.name as name, users.surname as surname 
         FROM friends f 
-        JOIN users ON f.userID = users.id 
+        JOIN users ON f.friendID = users.id 
         WHERE f.userID = ?
     ");
-    $stmt->bind_param("i", $userID);
+    $stmt->bind_param("i", $id);
     $stmt->execute();
-    $result = $stmt->get_result(); // Get the result before closing the statement
+    $result = $stmt->get_result();
     $stmt->close();
 
     $friends = [];
@@ -60,12 +57,9 @@ if ($result->num_rows > 0) {
         $friends[] = $row;
     }
 
-    // Return the result as JSON
     echo json_encode(["success" => true, "data" => $friends]);
     exit;
 } else {
-    // Return an error response as JSON if the user with the phone number does not exist
-    echo json_encode(["success" => false, "error" => "No user found with this phoneNumber"]);
-    exit;
+    echo json_encode(["success" => false, "message" => "No user found with the given phone number"]);
 }
 ?>
