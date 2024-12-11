@@ -1,5 +1,5 @@
 <?php
-// Create a connection to the database
+// Database connection
 $db = new mysqli('localhost', 'root', '', 'more');
 
 // Check if the connection was successful
@@ -7,77 +7,80 @@ if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
 
-// Retrieve values from the URL using $_GET (check if they are set to avoid undefined index)
-$username = isset($_GET['username']) ? $_GET['username'] : '';
-$email = isset($_GET['email']) ? $_GET['email'] : '';
-$password = isset($_GET['pass']) ? $_GET['pass'] : '';
-$phoneNum = isset($_GET['phoneNum']) ? $_GET['phoneNum'] : '';
-$pesel = isset($_GET['pesel']) ? $_GET['pesel'] : '';
-$mName = isset($_GET['mName']) ? $_GET['mName'] : '';
-$country = isset($_GET['country']) ? $_GET['country'] : '';
-$city = isset($_GET['city']) ? $_GET['city'] : '';
-$street = isset($_GET['street']) ? $_GET['street'] : '';
-$bdNum = isset($_GET['bdNum']) ? $_GET['bdNum'] : '';
-$apNum = isset($_GET['apNum']) ? $_GET['apNum'] : '';
-$postal = isset($_GET['postal']) ? $_GET['postal'] : '';
+// Retrieve POST data
+$data = json_decode(file_get_contents("php://input"), true);
+
+$username = $data['username'] ?? '';
+$email = $data['email'] ?? '';
+$password = $data['password'] ?? '';
+$phoneNum = $data['phoneNum'] ?? '';
+$pesel = $data['pesel'] ?? '';
+$mName = $data['mName'] ?? '';
+$country = $data['country'] ?? '';
+$city = $data['city'] ?? '';
+$street = $data['street'] ?? '';
+$bdNum = $data['buldingNum'] ?? '';
+$apNum = $data['apNum'] ?? '';
+$postal = $data['postal'] ?? '';
+$name = $data['name'] ?? '';
+$surname = $data['surname'] ?? '';
 
 // Hash the password
-$hashedpass = password_hash($password, PASSWORD_DEFAULT);
-$createdAt = date('Y-m-d');
-$lastLogin = $createdAt;
+$hashedPass = password_hash($password, PASSWORD_DEFAULT);
 
-// Prepare an SQL statement to insert into the users table
-$stmt = $db->prepare("
-    INSERT INTO users (username, email, password_hash, phone_number, created_at, last_login)
-    VALUES (?, ?, ?, ?, ?, ?)
-");
+// Begin a transaction
+$db->begin_transaction();
 
-// Check if the preparation was successful
-if ($stmt === false) {
-    die("Failed to prepare query: " . $db->error);
-}
-
-// Bind parameters to the SQL query (all values are strings except for the dates)
-$stmt->bind_param(
-    "ssssss", // 's' denotes string type for each parameter
-    $username, $email, $hashedpass, $phoneNum, $createdAt, $lastLogin
-);
-
-// Execute the query
-if ($stmt->execute()) {
-    echo "User created successfully!<br>";
-
-    // Get the inserted user's ID
-    $user_id = $db->insert_id;
-
-    // Prepare an SQL statement to insert into the user_details table
-    $stmt_details = $db->prepare("
-        INSERT INTO user_details (user_id, pesel, mothers_maiden_name, country, city, street, building_number, apartment_number, postal_code)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+try {
+    // Insert into the `personal` table
+    $stmtPersonal = $db->prepare("
+        INSERT INTO personal (mothersMaidenName, country, city, street, buildingNumber, apartmentNumber, postal)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
+    $stmtPersonal->bind_param("sssssss", $mName, $country, $city, $street, $bdNum, $apNum, $postal);
+    $stmtPersonal->execute();
 
-    // Bind parameters for the second statement
-    $stmt_details->bind_param(
-        "issssssss", // 'i' for integer and 's' for strings
-        $user_id, $pesel, $mName, $country, $city, $street, $bdNum, $apNum, $postal
-    );
+    // Get the inserted personal ID
+    $personalID = $db->insert_id;
+    
+    // Insert into the `users` table
+    $stmtUsers = $db->prepare("
+        INSERT INTO users (personalID, username, email, name, surname, pesel, password, phoneNumber)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmtUsers->bind_param("isssssss", $personalID, $username, $email, $name, $surname, $pesel, $hashedPass, $phoneNum);
+    $stmtUsers->execute();
 
-    // Execute the second query to insert user details
-    if ($stmt_details->execute()) {
-        echo "User details added successfully!";
-    } else {
-        echo "Error adding user details: " . $stmt_details->error;
-    }
+    $userID = $db->insert_id;
+    $date = date("n/y");
+    $cvv = random_int(100,999);
+    $fullName = $name . " " . $surname;
 
-    // Close the user_details statement
-    $stmt_details->close();
+    $stmtCardNumber = $db->prepare("SELECT MAX(number) AS maxNumber FROM cards");
+    $stmtCardNumber->execute();
+    $result = $stmtCardNumber->get_result();
+    $row = $result->fetch_assoc();
+    $number = ($row['maxNumber'] ?? 6999999999999999) + 1;
+    $stmtCardNumber->close();
 
-} else {
-    echo "Error adding user: " . $stmt->error;
+    $stmtCard = $db->prepare("
+        INSERT INTO cards (userID, number, date, holderName, cvv, status)
+        VALUES (?, ?, ?, ?, ?,'active')
+    ");
+    $stmtCard->bind_param("iissi", $userID, $number, $date, $fullName, $cvv);
+    $stmtCard->execute();
+
+    $db->commit();
+
+    echo json_encode(["success" => true, "message" => "User created successfully."]);
+} catch (Exception $e) {
+    // Rollback the transaction on error
+    $db->rollback();
+    echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+} finally {
+    // Close database connection
+    $stmtUsers->close();
+    $stmtPersonal->close();
+    $stmtCard->close();
+    $db->close();
 }
-
-// Close the main statement and database connection
-$stmt->close();
-$db->close();
-
-header("../../../login.html");

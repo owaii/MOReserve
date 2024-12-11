@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -10,6 +11,8 @@
 		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+		<script src="static/src/js/ds.js"></script>
 	</head>
 	<body class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 text-gray-200">
 		<div class="w-[1440px] mx-auto bg-gray-800">
@@ -20,34 +23,34 @@
 						<img src="static/img/logo.png" alt="Logo">
 					</div>
 					<nav class="mt-10 space-y-6">
-						<a href="?page=dashboard" class="flex items-center gap-4 
+						<a href="?page=dashboard&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= (isset($_GET['page']) && $_GET['page'] == 'dashboard') || !isset($_GET['page']) ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 							<i class="fas fa-th-large"></i>
 							<span>Dashboard</span>
 						</a>
-						<a href="?page=contacts" class="flex items-center gap-4 
+						<a href="?page=contacts&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= isset($_GET['page']) && $_GET['page'] == 'contacts' ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 							<i class="fas fa-comment-dots"></i>
 							<span>Contacts</span>
 						</a>
-						<a href="?page=mycards" class="flex items-center gap-4 
+						<a href="?page=mycards&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= isset($_GET['page']) && $_GET['page'] == 'mycards' ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 							<i class="fas fa-wallet"></i>
 							<span>My Cards</span>
 						</a>
-						<a href="?page=activity" class="flex items-center gap-4 
+						<a href="?page=activity&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= isset($_GET['page']) && $_GET['page'] == 'activity' ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 							<i class="fas fa-chart-bar"></i>
 							<span>Activity</span>
 						</a>
 				</div>
 				<div class="p-6 space-y-4">
-					<a href="?page=settings" class="flex items-center gap-4 
+					<a href="?page=settings&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= isset($_GET['page']) && $_GET['page'] == 'settings' ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 						<i class="fas fa-cog"></i>
 						<span>Settings</span>
 					</a>
-					<a href="?page=gethelp" class="flex items-center gap-4 
+					<a href="?page=gethelp&id=<?php echo $_GET["id"]; ?>" class="flex items-center gap-4 
 												<?= isset($_GET['page']) && $_GET['page'] == 'gethelp' ? 'text-white font-bold' : 'text-gray-300 hover:text-white' ?>">
 						<i class="fas fa-question-circle"></i>
 						<span>Get Help</span>
@@ -56,8 +59,8 @@
 				<div class="p-6 mt-auto flex items-center gap-4 mb-6">
 					<img src="static/img/users/pfp/astrid.webp" alt="Profile Picture" class="w-10 h-10 rounded-full">
 					<div>
-						<p class="text-sm font-medium">Michael Jordan</p>
-						<p class="text-xs text-gray-400">michijordan</p>
+						<p class="text-sm font-medium" id="fullName">Michael Jordan</p>
+						<p class="text-xs text-gray-400" id="username">michijordan</p>
 						<!-- username -->
 					</div>
 				</div>

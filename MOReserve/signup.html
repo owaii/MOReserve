@@ -16,6 +16,8 @@
 				username: "",
 				email: "",
 				password: "",
+				name: "",
+				surname: "",
 				phoneNum: "",
 				pesel: "",
 				mName: "",
@@ -75,11 +77,12 @@
 			<div class="step hidden">
 				<h2 class="text-3xl font-bold text-teal-400">Contact Information</h2>
 				<input
-					id="phone-number"
+					id="phoneNumber"
 					required
 					type="text"
 					placeholder="Phone Number (e.g., 600 600 600)"
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
+					maxlength="9"
 				/>
 				<input
 					id="email"
@@ -89,7 +92,7 @@
 					class="w-full input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
 				/>
 				<input
-					id="confirm-email"
+					id=""
 					required
 					type="email"
 					placeholder="Confirm Email Address"
@@ -108,7 +111,7 @@
 					<button
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
 						onclick = "
-							user.phoneNum = document.getElementById('phone-number').value;
+							user.phoneNum = document.getElementById('phoneNumber').value;
 							user.email = document.getElementById('email').value;
 						"
 					>
@@ -138,6 +141,42 @@
 						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
 						onclick="
 						user.pesel = document.getElementById('pesel').value;
+						"
+					>
+						Next
+					</button>
+				</div>
+			</div>
+
+			<!-- step 3.5 -->
+			<div class="step hidden">
+				<h2 class="text-3xl font-bold text-teal-400">Personal Data</h2>
+				<input
+					required
+					type="text"
+					id="name"
+					placeholder="name"
+					class="w-96 input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
+				/>
+				<input
+					required
+					type="text"
+					id="surname"
+					placeholder="surname"
+					class="w-96 input-field block bg-gray-800 rounded-lg text-gray-200 text-lg px-4 py-3 mb-4"
+				/>
+				<div class="mt-8 flex justify-between">
+					<button
+						class="back-btn px-8 py-4 bg-gray-700 text-gray-300 font-bold rounded-lg shadow hover:bg-gray-600"
+					>
+						Back
+					</button>
+					<button
+						class="next-btn px-8 py-4 bg-teal-400 text-gray-900 font-bold rounded-lg shadow hover:bg-teal-500"
+						onclick="
+						user.pesel = document.getElementById('pesel').value;
+						user.name = document.getElementById('name').value;
+						user.surname = document.getElementById('surname').value;
 						"
 					>
 						Next
@@ -347,16 +386,39 @@
 			</div>
 		</div>
 		<script>
-			function Finalize() {
-				const dictstr = JSON.stringify(user, null, 2);
+			const Finalize = async () => {
+			try {
+				if (!user) {
+					throw new Error("User data is incomplete or invalid.");
+				}
 
-				console.log(dictstr);
+				const response = await fetch("static/src/php/signup.php", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(user),
+				});
 
-				let urlBase = "static/src/php/signup.php";
-				let urlMain = "?username="+user.username+"&email="+user.email+"&pass="+user.password+"&phoneNum="+user.phoneNum+"&pesel="+user.pesel+"&mName="+user.mName+"&country="+user.country+"&city="+user.city+"&street="+user.street+"&bdNum="+user.buldingNum+"&apNum="+user.apNum+"&postal="+user.postal;
-				let url = urlBase.concat(urlMain);
-				window.location.href = url;
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+
+				// Parse and log the server response
+				const result = await response.json();
+				console.log("Server Response:", result);
+
+				// Handle success case (e.g., navigate to another page)
+				if (result.success) {
+				console.log("Signup successful!");
+				// Redirect or perform additional actions
+				} else {
+				console.error("Signup failed:", result.message);
+				}
+			} catch (error) {
+				console.error("Error during finalization:", error);
 			}
+			};
 		</script>
 	</body>
 </html>

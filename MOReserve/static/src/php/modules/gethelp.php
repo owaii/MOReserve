@@ -1,0 +1,1 @@
+<div class="text-gray-200 flex items-center justify-center h-screen"> <div class="text-center"> <span class="text-6xl">Nie ma 😊</span> </div> </div>

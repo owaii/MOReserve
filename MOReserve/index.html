@@ -12,14 +12,19 @@
 <body class="bg-gray-900 text-gray-100 ">
 
   <!-- Header -->
-  <header class="bg-gray-800 shadow-lg navbar-sticky">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <img src="static/img/logo.png" alt="MOReserve Logo" class="h-12 w-auto object-contain">
-      <nav class="space-x-6 flex items-center">
-        <a href="#how-it-works" class="hover:text-teal-400">Features</a>
-        <a href="#special-offer" class="hover:text-teal-400">Special Offer</a>
-        <button onclick="window.location.href='login.html'" type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:scale-110 transition-transform">
-        Login
+  <header id="dynamic-navbar" class="fixed top-0 left-0 w-full z-50 transform rotate-2 origin-top-left hover:rotate-0 transition-transform duration-500 ease-in-out">
+    <div class="w-full h-20 bg-gradient-to-r from-cyan-500 via-teal-500 to-cyan-500 shadow-md flex items-center justify-between px-6">
+      <div class="flex items-center space-x-4">
+        <img src="static/img/logo.png" alt="MOReserve Logo" class="ml-48 h-14 w-auto object-contain">
+      </div>
+      <nav class="flex items-center space-x-8">
+        <a href="#how-it-works" class="text-white hover:text-gray-900 hover:underline">Features</a>
+        <a href="#special-offer" class="text-white hover:text-gray-900 hover:underline">Special Offer</a>
+        <button 
+          onclick="window.location.href='login.html'"
+          class="relative text-white bg-gray-800 hover:bg-white hover:text-gray-900 px-5 py-2 rounded-lg shadow-lg transition-transform transform hover:scale-110"
+        >
+          Login
         </button>
       </nav>
     </div>
@@ -197,5 +202,12 @@
   </footer>
 
 <script src="static/src/js/typewriter.js"></script>
+<script>
+  const navbar = document.getElementById('dynamic-navbar'); let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    navbar.style.transform = `translateY(${window.scrollY > lastScrollY ? '-100%' : '0'})`;
+    lastScrollY = window.scrollY;
+  });
+</script>
 </body>
 </html>
