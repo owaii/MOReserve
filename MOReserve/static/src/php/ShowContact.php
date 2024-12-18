@@ -1,14 +1,8 @@
-<?php 
+<?php include "conn.php";
 $data = array();
 
-$db = new mysqli("localhost", "root", "", "more");
-
-if ($db->connect_error) {
-    die(json_encode(["success" => false, "message" => "Database connection failed: " . $db->connect_error]));
-}
-
 $input = json_decode(file_get_contents("php://input"), true);
-$id = intval($input['id'] ?? 0);
+$id = 8;
 
 if ($id <= 0) {
     echo json_encode(["success" => false, "message" => "Invalid user ID provided."]);
@@ -27,16 +21,19 @@ $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
+$id = [];
+$fullName = [];
+$icon = [];
+$transactions = [];
+
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            'id' => $row['friendID'],
-            'name' => $row['name'] . ' ' . $row['surname'],
-            'pfp' => "static/img/users/pfp/" . ($row['icon'] ?: 'astrid.webp'),
-            'transactions' => $row['transactions']
-        ];
+        array_push($id, $row["friendID"]);
+        array_push($fullName, $row["name"]. " ". $row["surname"]);
+        array_push($icon, $row["icon"]);
+        array_push($transactions, $row["transactions"]);
     }
-    echo json_encode(["success" => true, "data" => $data]);
+    echo json_encode(["success" => true, "id" => $id, "fullName" => $fullName, "icon" => $icon, "transactions" => $transactions]);
 } else {
     echo json_encode(["success" => false, "message" => "No contacts found for the given userID"]);
 }

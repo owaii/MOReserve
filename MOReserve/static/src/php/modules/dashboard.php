@@ -1,11 +1,61 @@
 <?php 
-	$db = new mysqli('localhost', 'root', '', 'more');
-
-	if ($db->connect_error) {
-	    die("Connection failed: " . $db->connect_error);
-	}
+	include("static/src/php/conn.php");
 
 	$id = $_GET['id'];
+	$intNumber = null;
+	$date = "";
+	$holderName = "";
+	$status = "";
+	$newNumber = "";
+	$balance = null;
+
+	$CardStmt = $db->prepare("
+		SELECT
+			number,
+			date,
+			holderName,
+			status
+			FROM cards 
+			WHERE userID = ?
+	");
+	$CardStmt->bind_param("i",$id);
+
+	if (!$CardStmt->execute()) {
+	    die('Query failed: ' . $CardStmt->error);
+	}
+
+	$CardStmt->bind_result($intNumber, $date, $holderName, $status);
+
+	if ($CardStmt->fetch()) {
+		$number = (string)$intNumber;
+
+		for ($i = 0; $i < strlen($number); $i++) {
+			if ($i % 4 == 0) {
+				$newNumber .= " ";
+			} $newNumber .= $number[$i];
+		}
+	} else $newNumber = "Unknown number";
+	
+
+	$CardStmt->close();
+
+	$balanceStmt = $db->prepare("
+		SELECT 
+			balance
+		FROM users
+		WHERE id = ?
+	");
+	$balanceStmt->bind_param("i",$id);
+
+	if (!$balanceStmt->execute()) {
+	    die('Query failed: ' . $balanceStmt->error);
+	}
+
+	$balanceStmt->bind_result($balance);
+
+	$balanceStmt->fetch();
+
+	$balanceStmt->close();
 ?>
 <div class="grid grid-cols-3 gap-6">
 	<!-- card -->
@@ -15,23 +65,23 @@
 				<div class="flex justify-between">
 					<div>
 						<p class="font-light">Name</p>
-						<p class="font-medium tracking-widest" id="cardHolderName">Karthik P</p>
+						<p class="font-medium tracking-widest"><?php echo htmlspecialchars($holderName);?></p>
 					</div>
 					<img class="w-14 h-14" src="https://i.imgur.com/bbPHJVe.png" />
 				</div>
 				<div class="pt-1">
 					<p class="font-light">Card Number</p>
-					<p class="font-medium tracking-more-wider" id="cardNumber">4642 3489 9867 7632</p>
+					<p class="font-medium tracking-more-wider"><?php echo htmlspecialchars($newNumber); ?></p>
 				</div>
 				<div class="pt-6 pr-6">
 					<div class="flex justify-between">
 						<div>
 							<p class="font-light text-xs">Valid</p>
-							<p class="font-medium tracking-wider text-sm" id="status">11/15</p>
+							<p class="font-medium tracking-wider text-sm" id="status"><?php echo $status;?></p>
 						</div>
 						<div>
 							<p class="font-light text-xs">Expiry</p>
-							<p class="font-medium tracking-wider text-sm" id="date">03/25</p>
+							<p class="font-medium tracking-wider text-sm" id="date"><?php echo $date; ?></p>
 						</div>
 						<div>
 							<p class="font-light text-xs">CVV</p>
@@ -50,7 +100,7 @@
 			<div id="profileDropdown" class="relative">
 				<div onclick="toggleContacts()" class="flex items-center gap-4 cursor-pointer">
 					<img id="profilePic" src="static/img/users/pfp/astrid.webp" alt="Profile" class="w-10 h-10 rounded-full">
-					<span id="profileName">Charity</span>
+					<span id="profileName">Select user</span>
 					<i class="fas fa-chevron-down"></i>
 				</div>
 
@@ -85,12 +135,6 @@
 								';
 							}
 						}
-
-						if ($defaultContact) {
-							echo '<script>
-								setProfile("' . $defaultContact["name"] . '", "' . $defaultContact["surname"] . '", "' . $defaultContact["icon"] . '", "' . $defaultContact["id"] . '");
-							</script>';
-						}
 					?>
 				</ul>
 			</div>
@@ -100,7 +144,7 @@
 		</div>
 		<div class="bg-gray-800 shadow p-6 rounded-lg mt-6 flex justify-center">
 			<h4 class="text-6xl font-medium text-white">
-				<span class="typewriter-text bg-gradient-to-br from-teal-300 to-cyan-600 bg-clip-text text-transparent font-semibold" id="balance" delay="150">
+				<span class="typewriter-text bg-gradient-to-br from-teal-300 to-cyan-600 bg-clip-text text-transparent font-semibold" id="balance" delay="150" text="<?php echo htmlspecialchars("$" . (string)$balance); ?>">
 					<!--10,532$-->
 				</span>
 			</h4>
@@ -139,7 +183,9 @@
 	            $stmt = $db->prepare("
 	                SELECT amount, description, created, toUserID 
 	                FROM transactions 
-	                WHERE userID = ? OR toUserID = ?
+	                WHERE userID = ? OR toUserID = ? 
+					ORDER BY created DESC
+	                LIMIT 5
 	            ");
 	            $stmt->bind_param("ii", $id, $id);
 	            $stmt->execute();
@@ -226,5 +272,4 @@ function sendMoney(amount, userId) {
             alert("An error occurred. Please try again.");
         });
 	}
-
 </script>

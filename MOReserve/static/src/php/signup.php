@@ -44,7 +44,7 @@ try {
     $stmtUsers->execute();
 
     $userID = $db->insert_id;
-    $date = date("n/y");
+    $date = date("n/y", strtotime("+5 years"));
     $cvv = random_int(100,999);
     $fullName = $name . " " . $surname;
 

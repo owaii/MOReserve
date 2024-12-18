@@ -2,7 +2,40 @@
     const urlParam = new URLSearchParams(window.location.search);
     const id = urlParam.get('id');
 </script>
+<?php 
+    include("static/src/php/conn.php");
 
+    $id = $_GET["id"];
+    $name = "";
+    $surname = "";
+    $username = "";
+    $icon = "";
+    $login = "";
+
+    $stmt = $db->prepare("
+        SELECT 
+            username,
+            name,
+            surname,
+            icon,
+            login
+        FROM users
+        WHERE id = ?;
+    ");
+    $stmt->bind_param("i", $id);
+
+    if (!$stmt->execute()) {
+        die('Query failed: ' . $stmt->error);
+    }
+
+    $stmt->bind_result($username, $name, $surname, $icon, $login);
+
+    if ($stmt->fetch()) {
+        $fullName = $name . " " . $surname;
+    } else $fullName = "Unknown name";
+
+    $stmt->close();
+?>
 <div class="p-6 space-y-6">
     <section class="bg-gray-800 shadow rounded-lg p-6 space-y-4 text-gray-200">
         <h4 class="text-lg font-medium">Profile Settings</h4>
@@ -11,7 +44,7 @@
                  @dragover.prevent="isDragging = true" 
                  @dragleave="isDragging = false" 
                  @drop.prevent="isDragging = false">
-                <img src="static/img/users/pfp/astrid.webp" alt="Profile Picture" class="w-20 h-20 rounded-full border-4 border-gray-700 shadow">
+                <img src="static/img/users/pfp/<?php echo $icon; ?>" alt="Profile Picture" class="w-20 h-20 rounded-full border-4 border-gray-700 shadow">
                 <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                     <button class="text-sm bg-teal-500 px-3 py-1 rounded" @click="$refs.pfpInput.click()">Change</button>
                 </div>
@@ -21,8 +54,8 @@
                 </div>
             </div>
             <div>
-                <p class="text-xl font-medium" id="fullName">Michael Jordan</p>
-                <p class="text-sm text-gray-400" id="username">mjordan</p>
+                <p class="text-xl font-medium" id="fullName"><?php echo $fullName; ?></p>
+                <p class="text-sm text-gray-400" id="username"><?php echo $username; ?></p>
             </div>
         </div>
     </section>
@@ -72,7 +105,7 @@
 </div>
 
 <footer class="mt-6 text-center text-gray-400 text-sm">
-    <p>Last Logged In: <span id="lastLogin">12/10/2024</span></p>
+    <p>Last Logged In: <span id="lastLogin"><?php echo htmlspecialchars($login); ?></span></p>
 </footer>
 
 <script>
@@ -100,11 +133,13 @@
         const result = await response.json();
         if (result.success) {
             alert("Password updated successfully!");
-            document.getElementById('current-password').value = " ";
-            document.getElementById('new-password').value = " ";
+            document.getElementById('current-password').value = "";
+            document.getElementById('new-password').value = "";
             location.reload();
         } else {
             alert("Error: " + result.error);
+            document.getElementById('current-password').value = "";
+            document.getElementById('new-password').value = "";
         }
     }
 
@@ -130,7 +165,7 @@
         const result = await response.json();
         if (result.success) {
             alert("Email updated successfully!");
-            document.getElementById("new-email").value = " ";
+            document.getElementById("new-email").value = "";
             location.reload();
         } else {
             alert("Error: " + result.error);
@@ -159,7 +194,7 @@
         const result = await response.json();
         if (result.success) {
             alert("Username updated successfully!");
-            document.getElementById("new-username").value = " ";
+            document.getElementById("new-username").value = "";
             location.reload();
         } else {
             alert("Error: " + result.error);

@@ -1,4 +1,35 @@
+<?php 
+	include("static/src/php/conn.php");
 
+	$id = $_GET["id"];
+	$name = "";
+	$surname = "";
+	$username = "";
+	$icon = "";
+
+	$stmt = $db->prepare("
+		SELECT 
+			username,
+			name,
+			surname,
+			icon
+		FROM users
+		WHERE id = ?;
+	");
+	$stmt->bind_param("i", $id);
+
+	if (!$stmt->execute()) {
+	    die('Query failed: ' . $stmt->error);
+	}
+
+	$stmt->bind_result($username, $name, $surname, $icon);
+
+	if ($stmt->fetch()) {
+		$fullName = $name . " " . $surname;
+	} else $fullName = "Unknown name";
+
+	$stmt->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -12,7 +43,6 @@
 		<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-		<script src="static/src/js/ds.js"></script>
 	</head>
 	<body class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 text-gray-200">
 		<div class="w-[1440px] mx-auto bg-gray-800">
@@ -57,10 +87,10 @@
 					</a>
 				</div>
 				<div class="p-6 mt-auto flex items-center gap-4 mb-6">
-					<img src="static/img/users/pfp/astrid.webp" alt="Profile Picture" class="w-10 h-10 rounded-full">
+					<img src="static/img/users/pfp/<?php echo htmlspecialchars($icon); ?>" alt="Profile Picture" class="w-10 h-10 rounded-full">
 					<div>
-						<p class="text-sm font-medium" id="fullName">Michael Jordan</p>
-						<p class="text-xs text-gray-400" id="username">michijordan</p>
+						<p class="text-sm font-medium"><?php echo htmlspecialchars($fullName); ?></p>
+						<p class="text-xs text-gray-400"><?php echo htmlspecialchars($username); ?></p>
 						<!-- username -->
 					</div>
 				</div>

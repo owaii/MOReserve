@@ -52,12 +52,13 @@ if ($result->num_rows > 0) {
     $result = $stmt->get_result();
     $stmt->close();
 
-    $friends = [];
     while ($row = $result->fetch_assoc()) {
-        $friends[] = $row;
+        $fullName = $row["name"] . " " . $row["surname"];
+        $transactions = $row["transactions"];
+        $icon = $row["icon"];
     }
 
-    echo json_encode(["success" => true, "data" => $friends]);
+    echo json_encode(["success" => true, "fullName" => $fullName, "transactions" => $transactions, "icon" => $icon]);
     exit;
 } else {
     echo json_encode(["success" => false, "message" => "No user found with the given phone number"]);
