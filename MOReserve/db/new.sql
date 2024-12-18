@@ -33,6 +33,7 @@ CREATE TABLE transactions (
     amount DECIMAL(15,2) NOT NULL,
     description VARCHAR(255) NOT NULL DEFAULT 'przelew',
     created DATE DEFAULT CURRENT_DATE,
+    time time NOT NULL DEFAULT current_timestamp(),
     FOREIGN KEY (userID) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (toUserID) REFERENCES users(id) ON DELETE CASCADE
 );
