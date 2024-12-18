@@ -108,8 +108,6 @@
                             pfp: `static/img/users/pfp/${data.icon[i]}`,
                             transactions: data.transactions[i],
                         }));
-                    } else {
-                        alert("Error fetching contacts: " + data.error);
                     }
                 } catch (error) {
                     alert("An error occurred while fetching contacts.");
