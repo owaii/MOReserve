@@ -151,6 +151,9 @@
             },
 
             sendMoney(amount, phone, description) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+                
                 if (!amount || parseFloat(amount) <= 0) {
                     alert("Please enter a valid amount.");
                     return;
@@ -193,6 +196,7 @@
             },
 
             confirmTransaction() {
+                console.log(this.transaction.amount + " " + this.transaction.phone + " " + this.transaction.description);
                 this.sendMoney(this.transaction.amount, this.transaction.phone, this.transaction.description);
                 this.transaction = { phone: '', description: '', amount: '' };
                 this.closeTransactionModal();
