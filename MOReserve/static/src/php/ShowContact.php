@@ -2,7 +2,7 @@
 $data = array();
 
 $input = json_decode(file_get_contents("php://input"), true);
-$id = 8;
+$id = $input["id"];
 
 if ($id <= 0) {
     echo json_encode(["success" => false, "message" => "Invalid user ID provided."]);

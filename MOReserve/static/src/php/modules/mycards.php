@@ -1,4 +1,4 @@
-<div x-data="cardViewer()" class="flex flex-col items-center justify-center min-h-screen">
+<div x-data="cardViewer()" x-init="fetchContacts()" class="flex flex-col items-center justify-center min-h-screen">
     <div class="relative">
         <!-- arrow l -->
         <button 
@@ -163,4 +163,220 @@
         </div>
     </div>
 </div>
-<script src="static\src\js\mycards.js"></script>
+
+<script>
+function cardViewer() {
+    return {
+        cards: [
+            { name: 'Karthik P', number: '4642 3489 9867 7632', validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' }
+        ],
+        currentIndex: 0,
+        showPopup: false,
+        showAddCardPopup: false,
+        verificationCode: '',
+        showLimitsPopup: false,
+        showExpiryPopup: false,
+        confirmAddingCard: false,
+        newLimit: 0,
+        newExpiryDate: '',
+
+        async fetchContacts() {
+            console.log("Fetching contacts is being intitialized");
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                console.log("for userId: " + userId)
+
+                const response = await fetch("static/src/php/showCard.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: userId }),
+                });
+
+                const data = await response.json();
+
+                console.log("success: " + data.success)
+
+                if (data.success) {
+                    this.cards = data.name.map((_, i) => ({
+                        name: data.name[i],
+                        number: data.number[i],
+                        validFrom: data.date[i],
+                        expiry: data.created[i],
+                        logo: 'https://i.imgur.com/bbPHJVe.png',
+                    }));
+
+                    console.log(this.cards);
+                } else {
+                    this.showNotification('Failed to fetch card data.', 'error');
+                }
+            } catch (error) {
+                console.error("Error fetching contacts:", error);
+            }
+        },
+
+        async NewCard(name) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                const response = await fetch("static/src/php/addCard.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: userId, name: name }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Card added successfully");
+                    await this.fetchContacts(); // Reload cards after adding
+                } else {
+                    alert("Failed to add contact: " + data.message);
+                }
+            } catch (error) {
+                console.error("An error occurred while adding the contact." + error );
+            }
+        },
+
+        async BlockSomeCard(number) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                const response = await fetch("static/src/php/blockCard.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ number: number }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Card blocked successfully");
+                } else {
+                    alert("Failed to add contact: " + data.message);
+                }
+            } catch (error) {
+                console.error("An error occurred while adding the contact." + error );
+            }
+        },
+
+        async LimitSomeCard(number, limit) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                const response = await fetch("static/src/php/limitCard.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ number: number, limit: limit}),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Card limited successfully");
+                } else {
+                    alert("Failed to add contact: " + data.message);
+                }
+            } catch (error) {
+                console.error("An error occurred while adding the contact." + error );
+            }
+        },
+
+        async DateSomeCard(number, limit) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                const response = await fetch("static/src/php/dateCard.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ number: number, date: limit}),
+                });
+
+                const data = await response.json();
+            } catch (error) {
+                console.error("An error occurred while adding the contact." + error );
+            }
+        },
+
+        get currentCard() {
+            return this.cards[this.currentIndex] || { name: '', number: '', validFrom: '', expiry: '', logo: 'https://i.imgur.com/bbPHJVe.png' };
+        },
+        get isFirstCard() {
+            return this.currentIndex === 0;
+        },
+        get isLastCard() {
+            return this.currentIndex === this.cards.length - 1;
+        },
+        prevCard() {
+            if (!this.isFirstCard) this.currentIndex--;
+        },
+        nextCard() {
+            if (!this.isLastCard) this.currentIndex++;
+        },
+        openCardPopup() {
+            this.showPopup = true;
+        },
+        closePopup() {
+            this.showPopup = false;
+        },
+        blockCard() {
+            this.BlockSomeCard(this.cards[this.currentIndex].number);
+        },
+        openLimitsPopup() {
+            this.showLimitsPopup = true;
+        },
+        closeLimitsPopup() {
+            this.showLimitsPopup = false;
+        },
+        openAddCardPopup() {
+            this.showAddCardPopup = true;
+            this.verificationCode = '';
+        },
+        closeAddCardPopup() {
+            this.showAddCardPopup = false;
+        },
+        saveLimits() {
+            this.LimitSomeCard(this.cards[this.currentIndex].number, this.newLimit);
+            alert(`Limits Changed Successfully to ${this.newLimit}`);
+            this.closeLimitsPopup();
+        },
+        openExpiryPopup() {
+            this.showExpiryPopup = true;
+        },
+        closeExpiryPopup() {
+            this.showExpiryPopup = false;
+        },
+        saveExpiry() {
+            if (/^\d{2}\/\d{2}$/.test(this.newExpiryDate)) {
+                this.currentCard.expiry = this.newExpiryDate;
+                alert(`Expiry Date Changed Successfully to ${this.newExpiryDate}`);
+                this.DateSomeCard(this.cards[this.currentIndex].number, this.newExpiryDate);
+                this.closeExpiryPopup();
+            } else {
+                alert('Invalid Expiry Date Format. Please use MM/YY.');
+            }
+        },
+        completeAddCard() {
+            if (this.verificationCode === '123') {
+                this.confirmAddingCard = true;
+                console.log(this.cards[this.currentIndex].name);
+                if (confirm('Are you sure you want to add a new card?')) {
+                    this.NewCard(this.cards[this.currentIndex].name);
+                }
+                this.closeAddCardPopup();
+            } else {
+                alert('Invalid verification code. Please try again.');
+            }
+        },
+
+        reload() {
+            this.fetchContacts(); // Call fetchContacts with the correct context
+        },
+    };
+}
+</script>
