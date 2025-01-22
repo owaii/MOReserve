@@ -8,7 +8,7 @@ if (!isset($input["number"])) {
     exit;
 }
 
-$number = $input["number"]; 
+$number = preg_replace('/\s+/', '', $input["number"]);
 $newLimit = $input["limit"];
 
 $stmt = $db->prepare("UPDATE cards SET limits = ? WHERE number = ?");

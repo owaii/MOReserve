@@ -53,7 +53,17 @@ if ($result->num_rows > 0) {
         $x = new DateTime($rawDate);
         $formattedDate = $x->format('m/y');
         
-        $number[] = $row["number"];
+        $newNumber = "";
+        $num = (string)$row["number"];
+
+        for ($i = 0; $i < strlen($num); $i++) {
+            if ($i % 4 == 0) {
+                $newNumber .= " ";
+            } $newNumber .= $num[$i];
+        }
+
+        $number[] = $newNumber;
+
         $date[] = $row["date"]; // Store the formatted date
         $holderName[] = $row["holderName"];
         $cvv[] = $row["cvv"];

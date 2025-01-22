@@ -46,6 +46,12 @@ try {
             $stmt->bind_param("iiis", $id, $userId, $value, $description);
             $stmt->execute();
             $stmt->close();
+          
+            $stmt = $db->prepare("UPDATE friends SET transactions = transactions + 1 WHERE userID = ? AND friendID = ?");
+            $description = "Money transfer";
+            $stmt->bind_param("ii", $id, $userId);
+            $stmt->execute();
+            $stmt->close();
 
             $db->commit();
             echo json_encode(["success" => true, "message" => "Transaction successful."]);

@@ -17,6 +17,7 @@
 			status
 			FROM cards 
 			WHERE userID = ?
+			LIMIT 1
 	");
 	$CardStmt->bind_param("i",$id);
 
@@ -81,7 +82,7 @@
 						</div>
 						<div>
 							<p class="font-light text-xs">Expiry</p>
-							<p class="font-medium tracking-wider text-sm" id="date"><?php echo $date; ?></p>
+							<p class="font-medium tracking-wider text-sm" id="date"><?php echo htmlspecialchars($date); ?></p>
 						</div>
 						<div>
 							<p class="font-light text-xs">CVV</p>
@@ -95,7 +96,7 @@
 			<h4 class="text-xl font-medium">Send Money</h4>
 			<div class="mt-6 space-y-4">
 			<div>
-				<input id="money" type="text" placeholder="Enter the amount" value="$800.00" class="w-full px-4 py-2 focus:border-none rounded-lg bg-gray-600 text-gray-200">
+				<input id="money" type="text" placeholder="Enter the amount" class="w-full px-4 py-2 focus:border-none rounded-lg bg-gray-600 text-gray-200">
 			</div>
 			<div id="profileDropdown" class="relative">
 				<div onclick="toggleContacts()" class="flex items-center gap-4 cursor-pointer">
@@ -184,7 +185,7 @@
 	                SELECT amount, description, created, toUserID 
 	                FROM transactions 
 	                WHERE userID = ? OR toUserID = ? 
-					ORDER BY created DESC
+					ORDER BY created DESC, time DESC
 	                LIMIT 5
 	            ");
 	            $stmt->bind_param("ii", $id, $id);
@@ -223,7 +224,7 @@
 	</section>
 </div>
 <script>
-    function toggleContacts() {
+function toggleContacts() {
     const contactsList = document.getElementById("contactsList");
     contactsList.classList.toggle("hidden");
     const expanded = contactsList.classList.contains("hidden") ? "false" : "true";
@@ -234,6 +235,10 @@ function setProfile(name, surname, icon, userId) {
     document.getElementById("profileName").textContent = `${name} ${surname}`;
     document.getElementById("profilePic").src = `static/img/users/pfp/${icon}`;
     document.getElementById("selectedUserId").value = userId;
+	const contactsList = document.getElementById("contactsList");
+    contactsList.classList.toggle("hidden");
+    const expanded = contactsList.classList.contains("hidden") ? "true" : "false";
+    contactsList.setAttribute("aria-expanded", expanded);
 }
 
 function sendMoney(amount, userId) {

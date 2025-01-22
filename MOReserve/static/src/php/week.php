@@ -27,20 +27,18 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$day = [];
-$res = [];
+$day = [0, 0, 0, 0, 0, 0, 0];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        array_push($day, $row["day_of_week"]);
-        array_push($res, $row["avg_amount"]);
+        $day[$row["day_of_week"] - 2] = $row["avg_amount"];
     }
 } else {
     echo json_encode(["status" => false, "message" => "No data found for the current week"]);
     exit;
 }
 
-echo json_encode(["status" => true, "day" => $day, "avg" => $res]);
+echo json_encode(["status" => true, "day" => $day]);
 
 $stmt->close();
 ?>

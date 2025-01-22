@@ -100,7 +100,7 @@
         <div class="bg-gradient-to-r from-gray-800 to-gray-700 p-8 rounded-lg text-gray-200 w-[400px] max-w-full">
             <h2 class="text-2xl font-bold text-white text-center mb-6">Verify Identity</h2>
             <p class="text-gray-300 text-sm text-center mb-4">
-                Please enter the last 3 characters of your password.
+                Please enter numbers '123' to find out if you aint some bot.
             </p>
             <input 
                 type="password" 
@@ -163,11 +163,11 @@
         </div>
     </div>
 </div>
-
 <script>
 function cardViewer() {
     return {
         cards: [
+            { name: 'Karthik P', number: '4642 3489 9867 7632', validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' },
             { name: 'Karthik P', number: '4642 3489 9867 7632', validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' }
         ],
         currentIndex: 0,
@@ -295,6 +295,23 @@ function cardViewer() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ number: number, date: limit}),
+                });
+
+                const data = await response.json();
+            } catch (error) {
+                console.error("An error occurred while adding the contact." + error );
+            }
+        },
+
+        async CheckPass(pass) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get("id");
+
+                const response = await fetch("static/src/php/checkPass2.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ number: pass, id: userId}),
                 });
 
                 const data = await response.json();

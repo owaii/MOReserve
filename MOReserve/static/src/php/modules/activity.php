@@ -148,10 +148,10 @@
             const data = await response.json();
 
             if (data.status) {
-                for (let i = 1; i < data.day.length; i++) {
-                    fetchActivityData.push(data.avg[i]);
+                for (let i = 0; i < data.day.length; i++) {
+                    fetchActivityData.push(data.day[i]);
                 }
-                fetchActivityData.push(data.avg[0]);
+                fetchActivityData.push(data.day[0]);
             } else {
                 console.error("Server returned an error:", data.message);
             }
@@ -230,7 +230,7 @@
                     datalabels: {
                         anchor: 'end',
                         align: 'top',
-                        formatter: (value) => `$${value}`,
+                        formatter: (value) => ``,
                         color: 'white',
                         font: { family: 'Monospace' },
                     }

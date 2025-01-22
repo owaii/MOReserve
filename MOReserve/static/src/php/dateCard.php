@@ -8,10 +8,10 @@ if (!isset($input["number"])) {
     exit;
 }
 
-$number = $input["number"]; 
+$number = preg_replace('/\s+/', '', $input["number"]);
 $newLimit = $input["date"];
 
-$stmt = $db->prepare("UPDATE cards SET date = ? WHERE number = ?");
+$stmt = $db->prepare("UPDATE cards SET `date` = ? WHERE number = ?");
 
 if (!$stmt) {
     echo json_encode(["success" => false, "message" => "Database query preparation failed."]);

@@ -26,11 +26,10 @@ document.addEventListener('alpine:init', () => {
                 const data = await response.json();
 
                 if (data.status) {
-                    const tempData = new Array(7).fill(0);
-                    for (let i = 1; i < data.day.length; i++) {
-                        tempData[i] = data.avg[i] || 0;
+                    const tempData = [];
+                    for (let i = 0; i < data.day.length; i++) {
+                        tempData[i] = data.day[i] || 0;
                     }
-                    tempData[0] = data.avg[0] || 0;
                     this.fetchDahsData = tempData;
                 } else {
                     console.error("Server returned an error:", data.message);
