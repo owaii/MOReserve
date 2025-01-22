@@ -3,7 +3,7 @@ include "conn.php";
 
 // Decode input
 $input = json_decode(file_get_contents('php://input'), true);
-$status = "block";
+$status = "inactive";
 
 // Check if 'number' is set in the input
 if (!isset($input["number"])) {
