@@ -259,10 +259,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `personalID`, `icon`, `username`, `email`, `name`, `surname`, `pesel`, `password`, `phoneNumber`, `created`, `login`, `balance`) VALUES
-(1, 1, 'astrid.webp', 'adam1', 'adam@gmail.com', 'Adam', 'Iwanski', '11111111111', '$2y$10$.GOynrhLykl7SVQd4/VgzeJ0VV84XkTFW21i3PQ8mivkZsF.mkZe2', '111111111', '2024-12-11', NULL, 197.00),
-(4, 4, 'astrid.webp', 'wiktor', 'wiktor@gmail.com', 'Wiktor', 'Kosmala', '22222222222', '$2y$10$JVJUcAsOBSosdQuZip07p.oc/lu18QDeEmmQxsdcm8g..HgBG3lBG', '222222222', '2024-12-11', NULL, 300.00),
-(6, 6, 'astrid.webp', ' brysio', 'brysio@gmail.com', 'Brysio', 'Brysio', '33333333333', '$2y$10$3hKUzJzK129kXaj/8eCHHeXwYxtWbzdn2tu5jCCyGlpLVhhj5fwbi', '333333333', '2024-12-11', '2024-12-11', 207.00),
-(7, 7, 'astrid.webp', 'mik', 'mi@gmail.com', 'mik', 'mik', '14151251251', '$2y$10$BCrBlcotJLoukfY1TGaD.OEARJh7siVy9tfgAKUsjwKtwQsGPNMQ2', '281471824', '2024-12-11', '2024-12-11', 5.00),
+(1, 1, 'astrid.webp', 'adam1', 'adam@gmail.com', 'Adam', 'Iwanski', '11111111111', '$2y$10$.GOynrhLykl7SVQd4/VgzeJ0VV84XkTFW21i3PQ8mivkZsF.mkZe2', '111 111 111', '2024-12-11', NULL, 197.00),
+(4, 4, 'astrid.webp', 'wiktor', 'wiktor@gmail.com', 'Wiktor', 'Kosmala', '22222222222', '$2y$10$JVJUcAsOBSosdQuZip07p.oc/lu18QDeEmmQxsdcm8g..HgBG3lBG', '222 222 222', '2024-12-11', NULL, 300.00),
+(6, 6, 'astrid.webp', ' brysio', 'brysio@gmail.com', 'Brysio', 'Brysio', '33333333333', '$2y$10$3hKUzJzK129kXaj/8eCHHeXwYxtWbzdn2tu5jCCyGlpLVhhj5fwbi', '333 333 333', '2024-12-11', '2024-12-11', 207.00),
+(7, 7, 'astrid.webp', 'mik', 'mi@gmail.com', 'mik', 'mik', '14151251251', '$2y$10$BCrBlcotJLoukfY1TGaD.OEARJh7siVy9tfgAKUsjwKtwQsGPNMQ2', '281 471 824', '2024-12-11', '2024-12-11', 5.00),
 (8, 8, 'astrid.webp', 'adam', 'p2@gmail.com', 'p', 'pp', '23151125125', '$2y$10$PEID82IK.rWMTJg6SdTfFeUQW/U2XQiWoMJfh6Y3vBJ.vpxrl.6aq', '235 235 325', '2024-12-15', '2025-01-14', 1.00),
 (9, 9, 'astrid.webp', 'miko', 'm@gmail.com', 'Mikolaj', 'Brysacz', '35235235325', '$2y$10$5xtaggt0q.1qOP1fbqlK..wlsgJSZXuRI1zNMME.zr8iomB2YIjyq', '812 748 127', '2024-12-15', '2024-12-15', 200.00);
 
