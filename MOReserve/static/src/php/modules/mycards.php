@@ -32,7 +32,7 @@
                             <div class="flex justify-between">
                                 <div>
                                     <p class="font-light text-xs">Valid</p>
-                                    <p class="font-medium tracking-wider text-sm" x-text="currentCard.validFrom"></p>
+                                    <p class="font-medium tracking-wider text-sm" x-text="currentCard.status"></p>
                                 </div>
                                 <div>
                                     <p class="font-light text-xs">Expiry</p>
@@ -84,7 +84,7 @@
                 <p><strong>CVV:</strong> <span>123</span></p>
             </div>
             <div class="mt-8 flex flex-col gap-4">
-                <button @click="blockCard" class="bg-red-600 text-white px-4 py-3 rounded hover:bg-red-700">Block Card</button>
+                <button @click="blockCard" class="bg-red-600 text-white px-4 py-3 rounded hover:bg-red-700" x-text="currentCard.status == 'active' ? 'Block Card' : 'Unblock Card'"></button>
                 <button @click="openLimitsPopup" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700">Change Limits</button>
                 <button @click="openExpiryPopup" class="bg-yellow-600 text-white px-4 py-3 rounded hover:bg-yellow-700">Change Expiry</button>
             </div>
@@ -100,11 +100,10 @@
         <div class="bg-gradient-to-r from-gray-800 to-gray-700 p-8 rounded-lg text-gray-200 w-[400px] max-w-full">
             <h2 class="text-2xl font-bold text-white text-center mb-6">Verify Identity</h2>
             <p class="text-gray-300 text-sm text-center mb-4">
-                Please enter numbers '123' to find out if you aint some bot.
+                Please enter your password.
             </p>
             <input 
                 type="password" 
-                maxlength="3" 
                 class="w-full p-3 rounded bg-gray-900 text-white mb-6 text-center"
                 x-model="verificationCode"
             >
@@ -167,8 +166,8 @@
 function cardViewer() {
     return {
         cards: [
-            { name: 'Karthik P', number: '4642 3489 9867 7632', validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' },
-            { name: 'Karthik P', number: '4642 3489 9867 7632', validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' }
+            { name: 'Karthik P', number: '4642 3489 9867 7632', status: "active", validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' },
+            { name: 'Karthik P', number: '4642 3489 9867 7632', status: "active", validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' }
         ],
         currentIndex: 0,
         showPopup: false,
@@ -202,8 +201,9 @@ function cardViewer() {
                     this.cards = data.name.map((_, i) => ({
                         name: data.name[i],
                         number: data.number[i],
-                        validFrom: data.date[i],
-                        expiry: data.created[i],
+                        status: data.status[i],
+                        validFrom: data.created[i],
+                        expiry: data.date[i],
                         logo: 'https://i.imgur.com/bbPHJVe.png',
                     }));
 
@@ -240,7 +240,7 @@ function cardViewer() {
             }
         },
 
-        async BlockSomeCard(number) {
+        async BlockSomeCard(number, txt) {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const userId = urlParams.get("id");
@@ -248,13 +248,14 @@ function cardViewer() {
                 const response = await fetch("static/src/php/blockCard.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ number: number }),
+                    body: JSON.stringify({ number: number, txt: txt}),
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
                     alert("Card blocked successfully");
+                    await this.fetchContacts();
                 } else {
                     alert("Failed to add contact: " + data.message);
                 }
@@ -311,10 +312,18 @@ function cardViewer() {
                 const response = await fetch("static/src/php/checkPass2.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ number: pass, id: userId}),
+                    body: JSON.stringify({ password: pass, id: userId}),
                 });
 
                 const data = await response.json();
+
+                console.log(data.mess);
+
+                if(data.success) {
+                    return true;
+                } else {
+                    return false;
+                }
             } catch (error) {
                 console.error("An error occurred while adding the contact." + error );
             }
@@ -342,7 +351,10 @@ function cardViewer() {
             this.showPopup = false;
         },
         blockCard() {
-            this.BlockSomeCard(this.cards[this.currentIndex].number);
+            if (this.cards[this.currentIndex].status == 'active')
+                this.BlockSomeCard(this.cards[this.currentIndex].number, "inactive");
+            else 
+                this.BlockSomeCard(this.cards[this.currentIndex].number, "active");
         },
         openLimitsPopup() {
             this.showLimitsPopup = true;
@@ -379,7 +391,7 @@ function cardViewer() {
             }
         },
         completeAddCard() {
-            if (this.verificationCode === '123') {
+            if (this.CheckPass(this.verificationCode)) {
                 this.confirmAddingCard = true;
                 console.log(this.cards[this.currentIndex].name);
                 if (confirm('Are you sure you want to add a new card?')) {

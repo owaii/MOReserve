@@ -17,7 +17,7 @@ if ($id <= 0) {
 }
 
 $stmt = $db->prepare("
-    SELECT number, date, holderName, cvv, status, created, limits 
+    SELECT number, date, holderName, cvv, status, created, limits
     FROM cards 
     WHERE userID = ?;
 ");
@@ -76,6 +76,7 @@ if ($result->num_rows > 0) {
     echo json_encode([
         "success" => true,
         "number" => $number,
+        "status" => $status,
         "date" => $date,
         "name" => $holderName,
         "created" => $created

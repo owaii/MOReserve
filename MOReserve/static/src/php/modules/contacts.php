@@ -45,6 +45,7 @@
                 <h2 class="text-xl font-medium mb-2" x-text="selectedContact.name"></h2>
                 <p class="text-gray-400 mb-4">Transactions: <span x-text="selectedContact.transactions"></span></p>
                 <button @click="closeContactModal" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition">Close</button>
+                <button @click="delContact(selectedContact.actualID)" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Delete</button>
             </div>
         </div>
 
@@ -104,6 +105,7 @@
                     if (data.success) {
                         this.contacts = data.id.map((_, i) => ({
                             id: i,
+                            actualID: data.id[i],
                             name: data.fullName[i],
                             pfp: `static/img/users/pfp/${data.icon[i]}`,
                             transactions: data.transactions[i],
@@ -138,6 +140,7 @@
                         this.contacts.push({
                             id: this.contacts.length + 1,
                             name: data.fullName,
+                            actualID: data.id,
                             pfp: `static/img/users/pfp/${data.icon || 'default.webp'}`,
                             transactions: data.transactions || 0,
                         });
@@ -147,6 +150,31 @@
                     }
                 } catch (error) {
                     alert("An error occurred while adding the contact.");
+                }
+            },
+
+            async delContact(id) {
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const userId = urlParams.get("id");
+
+                    const response = await fetch("static/src/php/delContact.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: userId, friendID: id }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert("Contact deleted successfully!");
+                        this.contacts = this.contacts.filter(contact => contact.actualID !== id);
+                        this.closeContactModal();
+                    } else {
+                        alert("Failed to delete contact: " + data.error);
+                    }
+                } catch (error) {
+                    alert("An error occurred while deleting the contact.");
                 }
             },
 

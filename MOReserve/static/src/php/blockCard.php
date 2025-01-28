@@ -3,7 +3,6 @@ include "conn.php";
 
 // Decode input
 $input = json_decode(file_get_contents('php://input'), true);
-$status = "inactive";
 
 // Check if 'number' is set in the input
 if (!isset($input["number"])) {
@@ -12,6 +11,7 @@ if (!isset($input["number"])) {
 }
 
 $number = preg_replace('/\s+/', '', $input["number"]);
+$status = $input["txt"];
 
 // Prepare the query to update the card status
 $stmt = $db->prepare("UPDATE cards SET `status` = ? WHERE number = ?");

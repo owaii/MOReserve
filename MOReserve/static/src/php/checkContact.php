@@ -58,7 +58,7 @@ if ($result->num_rows > 0) {
         $icon = $row["icon"];
     }
 
-    echo json_encode(["success" => true, "fullName" => $fullName, "transactions" => $transactions, "icon" => $icon]);
+    echo json_encode(["success" => true, "fullName" => $fullName, "transactions" => $transactions, "icon" => $icon, "id" => $friendID]);
     exit;
 } else {
     echo json_encode(["success" => false, "message" => "No user found with the given phone number"]);
