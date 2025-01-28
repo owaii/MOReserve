@@ -157,6 +157,7 @@
         .then(data => {
             if (data.success) {
                 alert('File uploaded successfully!');
+                location.reload();
             } else {
                 console.log(data.message);
                 alert('Error uploading file');
