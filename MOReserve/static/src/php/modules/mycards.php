@@ -16,7 +16,7 @@
                     class="animate-fade-up w-96 h-64 m-auto bg-gradient-to-r from-teal-700 to-gray-800 rounded-xl relative text-white shadow-lg transition-transform transform hover:scale-105 cursor-pointer"
                     @click="openCardPopup"
                 >
-                    <div class="px-8 absolute top-8">
+                    <div class="w-full px-8 absolute top-8">
                         <div class="flex justify-between">
                             <div>
                                 <p class="font-light">Name</p>
@@ -84,7 +84,7 @@
                 <p><strong>CVV:</strong> <span>123</span></p>
             </div>
             <div class="mt-8 flex flex-col gap-4">
-                <button @click="blockCard" class="bg-red-600 text-white px-4 py-3 rounded hover:bg-red-700" x-text="currentCard.status == 'active' ? 'Block Card' : 'Unblock Card'"></button>
+                <button @click="blockCard"  class="bg-red-600 text-white px-4 py-3 rounded hover:bg-red-700" x-text="currentCard.status == 'active' ? 'Block Card' : 'Unblock Card'"></button>
                 <button @click="openLimitsPopup" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700">Change Limits</button>
                 <button @click="openExpiryPopup" class="bg-yellow-600 text-white px-4 py-3 rounded hover:bg-yellow-700">Change Expiry</button>
             </div>
@@ -165,10 +165,7 @@
 <script>
 function cardViewer() {
     return {
-        cards: [
-            { name: 'Karthik P', number: '4642 3489 9867 7632', status: "active", validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' },
-            { name: 'Karthik P', number: '4642 3489 9867 7632', status: "active", validFrom: '11/15', expiry: '03/25', logo: 'https://i.imgur.com/bbPHJVe.png' }
-        ],
+        cards: [],
         currentIndex: 0,
         showPopup: false,
         showAddCardPopup: false,
@@ -254,7 +251,6 @@ function cardViewer() {
                 const data = await response.json();
 
                 if (data.success) {
-                    alert("Card blocked successfully");
                     await this.fetchContacts();
                 } else {
                     alert("Failed to add contact: " + data.message);

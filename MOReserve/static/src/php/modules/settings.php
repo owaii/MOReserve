@@ -37,28 +37,28 @@
     $stmt->close();
 ?>
 <div class="p-6 space-y-6">
-        <section class="bg-gray-800 shadow rounded-lg p-6 space-y-4 text-gray-200">
-            <h4 class="text-lg font-medium">Profile Settings</h4>
-            <div class="flex items-center gap-6">
-                <div class="relative group" x-data="{ isDragging: false }" 
-                     @dragover.prevent="isDragging = true" 
-                     @dragleave="isDragging = false" 
-                     @drop.prevent="isDragging = false">
-                    <img src="static/img/users/pfp/astrid.webp" alt="Profile Picture" class="w-20 h-20 rounded-full border-4 border-gray-700 shadow">
-                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                        <button class="text-sm bg-teal-500 px-3 py-1 rounded" @click="$refs.pfpInput.click()">Change</button>
-                    </div>
-                    <input type="file" x-ref="pfpInput" class="hidden" @change="alert('Profile picture updated!')">
-                    <div x-show="isDragging" class="absolute inset-0 bg-teal-500 bg-opacity-20 flex items-center justify-center rounded-full">
-                        <p class="text-sm font-medium">Drop to upload</p>
-                    </div>
+    <section class="bg-gray-800 shadow rounded-lg p-6 space-y-4 text-gray-200">
+        <h4 class="text-lg font-medium">Profile Settings</h4>
+        <div class="flex items-center gap-6">
+            <div class="relative group" x-data="{ isDragging: false }" 
+                 @dragover.prevent="isDragging = true" 
+                 @dragleave="isDragging = false" 
+                 @drop.prevent="handleFileDrop">
+                <img src="static/img/users/pfp/<?php echo htmlspecialchars($icon)?>" alt="Profile Picture" class="w-20 h-20 rounded-full border-4 border-gray-700 shadow">
+                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                    <button class="text-sm bg-teal-500 px-3 py-1 rounded" @click="$refs.pfpInput.click()">Change</button>
                 </div>
-                <div>
-                    <p class="text-xl font-medium"><?php echo $fullName;?></p>
-                    <p class="text-sm text-gray-400"><?php echo $username; ?></p>
+                <input type="file" x-ref="pfpInput" class="hidden" @change="handleFileChange">
+                <div x-show="isDragging" class="absolute inset-0 bg-teal-500 bg-opacity-20 flex items-center justify-center rounded-full">
+                    <p class="text-sm font-medium">Drop to upload</p>
                 </div>
             </div>
-        </section>
+            <div>
+                <p class="text-xl font-medium"><?php echo $fullName;?></p>
+                <p class="text-sm text-gray-400"><?php echo $username; ?></p>
+            </div>
+        </div>
+    </section>
 
         <section class="bg-gray-800 shadow rounded-lg p-6 space-y-4">
             <h4 class="text-lg font-medium">Change Password</h4>
@@ -127,6 +127,48 @@
 </div>
 
 <script>
+    function handleFileChange(event) {
+        const file = event.target.files[0];
+        if (file) {
+            uploadFile(file);
+        }
+    }
+
+    function handleFileDrop(event) {
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            uploadFile(file);
+        }
+    }
+
+    function uploadFile(file) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("id");
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('user_id', userId);
+
+        fetch('static/src/php/upload.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('File uploaded successfully!');
+            } else {
+                console.log(data.message);
+                alert('Error uploading file');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error uploading file');
+        });
+    }
+
+
     async function updatePassword() {
         const currentPassword = document.getElementById('current-password').value;
         const newPassword = document.getElementById('new-password').value;

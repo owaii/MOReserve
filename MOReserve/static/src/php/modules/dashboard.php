@@ -272,7 +272,6 @@
 	</section>
 </div>
 <script>
-// Toggle visibility of the contacts list when the dropdown is clicked
 function toggleContacts() {
     const contactsList = document.getElementById("contactsList");
     contactsList.classList.toggle("hidden");
@@ -280,16 +279,14 @@ function toggleContacts() {
     contactsList.setAttribute("aria-expanded", expanded);
 }
 
-// Set the selected profile details and update the Send Money button
 function setProfile(name, surname, icon, userId) {
     document.getElementById("profileName").textContent = `${name} ${surname}`;
     document.getElementById("profilePic").src = `static/img/users/pfp/${icon}`;
     document.getElementById("selectedUserId").value = userId;
-    toggleContacts(); // Close the contacts list after selection
-    enableSendButton(); // Enable the Send Money button if conditions are met
+    toggleContacts();
+    enableSendButton();
 }
 
-// Check if the button should be enabled
 function enableSendButton() {
     const moneyInput = document.getElementById("money");
     const sendButton = document.querySelector("button");
@@ -302,7 +299,6 @@ function enableSendButton() {
     }
 }
 
-// Handle Send Money action
 function sendMoney(amount, userId) {
     const urlParam = new URLSearchParams(window.location.search);
     const id = urlParam.get("id");
@@ -317,7 +313,6 @@ function sendMoney(amount, userId) {
         return;
     }
 
-    // Send the money using the fetch API
     fetch("static/src/php/sendMoney.php", {
         method: "POST",
         headers: {
@@ -340,11 +335,9 @@ function sendMoney(amount, userId) {
     });
 }
 
-// Listen for input changes to enable or disable the Send Money button
 document.getElementById("money").addEventListener("input", function() {
     enableSendButton();
 });
 
-// Initially disable the Send Money button until conditions are met
 document.querySelector("button").disabled = true;
 </script>
